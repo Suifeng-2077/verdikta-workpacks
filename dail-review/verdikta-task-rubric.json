@@ -1,0 +1,70 @@
+{
+  "title": "Verify five on-chain claims about one Base contract",
+  "instructions": "You are scoring a verification report. The submitter was given five factual claims about one contract on Base mainnet and asked to check each against the chain. Judge only what is reproduced in the submission: you cannot open links, so rely on the quoted values, the transaction hashes, the function names and the block numbers stated there. Apply every MUST PASS gate strictly and independently before scoring.",
+  "criteria": [
+    {
+      "id": "g1_structure",
+      "name": "One block per claim, nothing missing",
+      "description": "MUST PASS. The submission contains a section for each of the five claims. Each section states the claim as given, a verdict, the evidence, and the method used. A claim that is silently dropped, merged into another, or answered only in passing fails this gate.",
+      "weight": 0,
+      "must": true
+    },
+    {
+      "id": "g2_verdicts",
+      "name": "Verdict vocabulary used exactly",
+      "description": "MUST PASS. Every claim carries exactly one of CONFIRMED, REFUTED or UNVERIFIABLE as its verdict. No other wording substitutes for these three, and no claim is left without a verdict. A verdict that hedges, for example stating both CONFIRMED and UNVERIFIABLE for the same claim, fails this gate.",
+      "weight": 0,
+      "must": true
+    },
+    {
+      "id": "g3_evidence_for_decided_claims",
+      "name": "Decided claims carry a checkable reference",
+      "description": "MUST PASS. Every claim marked CONFIRMED or REFUTED cites the specific artefact that decides it: a transaction hash, or a contract read naming the function and the block number at which it was read, plus the value actually returned. A decided claim whose evidence is a screenshot, a summary or a general statement about the protocol fails this gate.",
+      "weight": 0,
+      "must": true
+    },
+    {
+      "id": "g4_coverage_note",
+      "name": "Limits stated explicitly",
+      "description": "MUST PASS. The submission ends with a coverage note that names anything the author could not check and says why. A submission that presents full coverage when the evidence does not support it fails this gate. An honest UNVERIFIABLE with a stated reason passes.",
+      "weight": 0,
+      "must": true
+    },
+    {
+      "id": "g5_no_invention",
+      "name": "Nothing invented",
+      "description": "MUST PASS. No fabricated transaction hashes, block numbers, contract addresses, balances or quotations. If a value cannot be sourced from the chain, it is not stated as fact. One invented figure fails this gate regardless of the rest of the report.",
+      "weight": 0,
+      "must": true
+    },
+    {
+      "id": "s1_correctness",
+      "name": "Verdicts match the chain",
+      "description": "Whether each verdict is the one the cited evidence actually supports. A verdict that the quoted value contradicts is a correctness failure even when the citation looks complete. Reward reports where the stated value and the stated verdict agree.",
+      "weight": 0.35,
+      "must": false
+    },
+    {
+      "id": "s2_evidence_specificity",
+      "name": "Evidence is specific enough to re-check",
+      "description": "How precisely each decided claim is pinned. Highest marks for a transaction hash or a function-plus-block pair with the returned value quoted verbatim. Lower marks for a block range, an explorer link with no quoted value, or a value restated in prose without its source.",
+      "weight": 0.25,
+      "must": false
+    },
+    {
+      "id": "s3_method_reproducibility",
+      "name": "Method can be repeated",
+      "description": "Whether a reader could reproduce each check in one step: contract address, function signature or selector, arguments, and the block used are all present. Penalise reports that describe a method in general terms without the parameters needed to run it.",
+      "weight": 0.2,
+      "must": false
+    },
+    {
+      "id": "s4_coverage_honesty",
+      "name": "Honesty about what was not checked",
+      "description": "How candid the coverage note is. Reward a report that flags a weak inference, names an assumption, or marks a claim UNVERIFIABLE rather than stretching evidence to a satisfying answer. Penalise a confident tone that the evidence does not support.",
+      "weight": 0.2,
+      "must": false
+    }
+  ],
+  "version": "1.0"
+}
