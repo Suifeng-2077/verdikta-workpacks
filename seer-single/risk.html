@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Risk Pricing — market estimates of DeFi risk, side by side</title>
+<meta name="description" content="Market estimates of default risk across DeFi protocols, presented as a comparison rather than a single yes-or-no price." />
+<style>
+/* ============================================================
+   Seer — Six Interfaces
+   Design system derived from the Electric Foundation brand kit:
+   deep neutral ground, violet as the single accent, cyan only
+   where a second signal is genuinely needed.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:            #08080c;
+  --bg-soft:       #0b0b12;
+  --panel:         #0f0f17;
+  --panel-2:       #131320;
+  --line:          rgba(255, 255, 255, 0.07);
+  --line-strong:   rgba(255, 255, 255, 0.14);
+  --ink:           #f2f2f7;
+  --ink-2:         #a9a9bd;
+  --ink-3:         #6d6d80;
+  --violet:        #7c5cff;
+  --violet-2:      #9b82ff;
+  --violet-dim:    rgba(124, 92, 255, 0.14);
+  --cyan:          #00c8dc;
+  --cyan-dim:      rgba(0, 200, 220, 0.12);
+  --green:         #35d39a;
+  --red:           #ff5c6e;
+  --amber:         #ffb347;
+  --r:             14px;
+  --r-sm:          9px;
+  --sans:          'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+  --body:          'Inter', 'Segoe UI', system-ui, sans-serif;
+  --mono:          'JetBrains Mono', ui-monospace, 'Cascadia Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background:
+    radial-gradient(1100px 620px at 78% -12%, rgba(124, 92, 255, 0.16), transparent 62%),
+    radial-gradient(760px 460px at 6% 104%, rgba(0, 200, 220, 0.07), transparent 60%),
+    var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* faint engineering grid, keeps large dark areas from looking flat */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 72px 72px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap { position: relative; z-index: 1; max-width: 1220px; margin: 0 auto; padding: 0 28px 96px; }
+
+/* ---------- top bar ---------- */
+.nav {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 26px;
+  padding: 16px 0 15px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(8, 8, 12, 0.82);
+  backdrop-filter: blur(14px);
+}
+.brand { display: flex; align-items: center; gap: 11px; font-family: var(--sans); font-weight: 600; letter-spacing: -0.01em; }
+.brand svg { display: block; }
+.nav a {
+  color: var(--ink-3); text-decoration: none; font-size: 13.5px; font-family: var(--sans);
+  transition: color 0.16s;
+}
+.nav a:hover { color: var(--ink); }
+.nav a.on { color: var(--ink); }
+.nav .spacer { flex: 1; }
+.nav .pill {
+  font-size: 11.5px; font-family: var(--mono); letter-spacing: 0.04em;
+  color: var(--violet-2); border: 1px solid rgba(124, 92, 255, 0.42);
+  padding: 4px 10px; border-radius: 999px; background: var(--violet-dim);
+}
+
+/* ---------- headings ---------- */
+.eyebrow {
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--violet-2); margin-bottom: 16px;
+}
+h1 {
+  font-family: var(--sans); font-weight: 600; letter-spacing: -0.028em;
+  font-size: clamp(34px, 5.2vw, 60px); line-height: 1.05;
+}
+h1 .thin { color: var(--ink-3); font-weight: 400; }
+h2 {
+  font-family: var(--sans); font-weight: 600; letter-spacing: -0.02em;
+  font-size: clamp(22px, 2.6vw, 30px); line-height: 1.2;
+}
+h3 { font-family: var(--sans); font-weight: 600; font-size: 17px; letter-spacing: -0.01em; }
+.lede { color: var(--ink-2); font-size: clamp(15px, 1.6vw, 18px); max-width: 62ch; margin-top: 18px; }
+
+/* ---------- hero ---------- */
+.hero { padding: 84px 0 60px; }
+.hero .actions { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--sans); font-size: 14px; font-weight: 500;
+  padding: 11px 20px; border-radius: var(--r-sm);
+  border: 1px solid var(--line-strong); background: transparent; color: var(--ink);
+  text-decoration: none; transition: background 0.16s, border-color 0.16s, transform 0.16s;
+}
+.btn:hover { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.24); }
+.btn.primary {
+  background: var(--violet); border-color: var(--violet); color: #ffffff; font-weight: 600;
+}
+.btn.primary:hover { background: var(--violet-2); border-color: var(--violet-2); transform: translateY(-1px); }
+
+/* ---------- grid + cards ---------- */
+.grid { display: grid; gap: 14px; }
+.g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.card {
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border: 1px solid var(--line); border-radius: var(--r);
+  padding: 22px; position: relative; overflow: hidden;
+  transition: border-color 0.18s, transform 0.18s;
+}
+.card:hover { border-color: rgba(124, 92, 255, 0.38); }
+a.card { text-decoration: none; color: inherit; display: block; }
+a.card:hover { transform: translateY(-2px); }
+.card .kicker {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px;
+}
+.card p { color: var(--ink-2); font-size: 13.5px; margin-top: 9px; }
+.card .go { margin-top: 16px; font-size: 12.5px; font-family: var(--mono); color: var(--violet-2); }
+
+.card.feature { grid-column: span 2; }
+@media (max-width: 900px) {
+  .g3, .g2, .g4 { grid-template-columns: 1fr; }
+  .card.feature { grid-column: span 1; }
+}
+
+/* ---------- stat ---------- */
+.stat .num {
+  font-family: var(--sans); font-weight: 600; font-size: 30px;
+  letter-spacing: -0.03em; font-variant-numeric: tabular-nums;
+}
+.stat .num small { font-size: 14px; color: var(--ink-2); font-weight: 400; margin-left: 3px; }
+.stat .lbl { font-size: 11.5px; font-family: var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+.up { color: var(--green); }
+.down { color: var(--red); }
+
+/* ---------- table ---------- */
+.table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.table th {
+  text-align: left; font-family: var(--mono); font-size: 10.5px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3);
+  padding: 0 14px 12px; border-bottom: 1px solid var(--line);
+}
+.table td { padding: 13px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); white-space: nowrap; }
+.table td.q { white-space: normal; }
+.table tr:last-child td { border-bottom: none; }
+.table tbody tr { transition: background 0.14s; }
+.table tbody tr:hover { background: rgba(255, 255, 255, 0.026); }
+.table .q { color: var(--ink); font-weight: 500; }
+.table .num { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink-2); }
+
+.tag {
+  display: inline-block; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.07em;
+  text-transform: uppercase; padding: 2.5px 8px; border-radius: 999px;
+  border: 1px solid var(--line-strong); color: var(--ink-3);
+}
+.tag.violet { color: var(--violet-2); border-color: rgba(124, 92, 255, 0.4); background: var(--violet-dim); }
+.tag.cyan { color: var(--cyan); border-color: rgba(0, 200, 220, 0.4); background: var(--cyan-dim); }
+.tag.green { color: var(--green); border-color: rgba(53, 211, 154, 0.4); }
+
+/* ---------- probability bar ---------- */
+.prob { display: flex; align-items: center; gap: 10px; }
+.prob .track { flex: 1; height: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.prob .fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--violet), var(--violet-2)); }
+.prob .fill.cy { background: linear-gradient(90deg, #0aa9bb, var(--cyan)); }
+.prob .val { font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; min-width: 46px; text-align: right; }
+
+/* ---------- layout with sidebar ---------- */
+.split { display: grid; grid-template-columns: 232px minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
+
+.side { position: sticky; top: 78px; }
+.side .group { margin-bottom: 22px; }
+.side .group h4 {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: 9px;
+}
+.side .opt {
+  display: flex; justify-content: space-between; gap: 8px;
+  padding: 7px 10px; border-radius: 7px; font-size: 13px; color: var(--ink-2); cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+}
+.side .opt:hover { background: rgba(255, 255, 255, 0.04); color: var(--ink); }
+.side .opt.on { background: var(--violet-dim); color: var(--violet-2); }
+.side .opt .n { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+
+/* ---------- section spacing ---------- */
+.sec { margin-top: 66px; }
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 18px; margin-bottom: 20px; flex-wrap: wrap; }
+.sec-head p { color: var(--ink-3); font-size: 13px; max-width: 48ch; }
+
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 22px; }
+
+/* ---------- bars chart ---------- */
+.bars { display: flex; flex-direction: column; gap: 11px; }
+.bar-row { display: grid; grid-template-columns: 168px minmax(0, 1fr) 58px; gap: 12px; align-items: center; font-size: 13px; }
+@media (max-width: 620px) { .bar-row { grid-template-columns: 104px minmax(0, 1fr) 52px; } }
+.bar-row .name { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-row .track { height: 9px; background: rgba(255, 255, 255, 0.06); border-radius: 999px; overflow: hidden; }
+.bar-row .fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #5b3fd6, var(--violet-2)); }
+.bar-row .pct { font-family: var(--mono); font-size: 12px; text-align: right; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+/* ---------- risk heat cells ---------- */
+.heat { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 10px; }
+.heat .cell {
+  border: 1px solid var(--line); border-radius: var(--r-sm); padding: 14px;
+  background: var(--panel-2); position: relative; overflow: hidden;
+}
+.heat .cell::after {
+  content: ''; position: absolute; inset: 0; opacity: var(--o, 0.1);
+  background: var(--c, var(--violet)); pointer-events: none;
+}
+.heat .cell .sym { font-family: var(--sans); font-weight: 600; font-size: 15px; position: relative; z-index: 1; }
+.heat .cell .pd { font-family: var(--mono); font-size: 21px; margin-top: 6px; position: relative; z-index: 1; font-variant-numeric: tabular-nums; }
+.heat .cell .sub { font-size: 11px; color: var(--ink-3); position: relative; z-index: 1; margin-top: 2px; }
+
+/* ---------- comparison columns ---------- */
+.versus { display: grid; grid-template-columns: 1fr 68px 1fr; gap: 14px; align-items: stretch; }
+@media (max-width: 760px) { .versus { grid-template-columns: 1fr; } }
+.versus .vs {
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 12px; color: var(--ink-3);
+}
+.verdict {
+  border-radius: var(--r); border: 1px solid rgba(53, 211, 154, 0.34);
+  background: rgba(53, 211, 154, 0.07); padding: 18px 22px;
+}
+
+/* ---------- leaderboard ---------- */
+.rank { display: flex; flex-direction: column; }
+.rank .row {
+  display: grid; grid-template-columns: 40px minmax(0, 1fr) 120px 92px;
+  gap: 14px; align-items: center; padding: 13px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-size: 13.5px;
+}
+@media (max-width: 640px) { .rank .row { grid-template-columns: 30px minmax(0, 1fr) 70px; } .rank .row .hide-sm { display: none; } }
+.rank .row:last-child { border-bottom: none; }
+.rank .i { font-family: var(--mono); color: var(--ink-3); font-size: 12px; }
+.rank .nm { font-weight: 500; }
+.rank .nm span { color: var(--ink-3); font-weight: 400; font-size: 12px; display: block; margin-top: 2px; }
+
+/* ---------- footer ---------- */
+.foot {
+  margin-top: 92px; padding-top: 26px; border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  color: var(--ink-3); font-size: 12.5px;
+}
+.foot a { color: var(--ink-3); text-decoration: none; }
+.foot a:hover { color: var(--violet-2); }
+
+/* ---------- misc ---------- */
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.dim { color: var(--ink-3); }
+.small { font-size: 12.5px; }
+hr.sep { border: none; border-top: 1px solid var(--line); margin: 26px 0; }
+
+.docnote {
+  border-left: 2px solid var(--violet); padding: 10px 0 10px 16px;
+  color: var(--ink-2); font-size: 13px; margin-top: 26px;
+}
+.docnote b { color: var(--ink); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="nav">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+        <path d="M13 1.6 24 7.6v10.8L13 24.4 2 18.4V7.6z" stroke="#7c5cff" stroke-width="1.4"/>
+        <path d="M13 1.6v22.8M2 7.6l11 6 11-6" stroke="#7c5cff" stroke-width="0.9" opacity="0.5"/>
+        <circle cx="13" cy="13" r="2.6" fill="#7c5cff"/>
+      </svg>
+      Seer
+    </div>
+    <a href="index.html">Ecosystem</a>
+    <a href="app.html">App</a>
+    <a href="deep.html">Deep</a>
+    <a href="futarchy.html">Futarchy</a>
+    <a href="opportunity.html">Opportunity</a>
+    <a class="on" href="risk.html">Risk Pricing</a>
+    <div class="spacer"></div>
+    <span class="pill">Q4 2026 · open</span>
+  </nav>
+
+  <header class="hero" style="padding:56px 0 26px">
+    <div class="eyebrow">Interface 05 · Risk</div>
+    <h1 style="font-size:clamp(30px,4vw,46px)">How risky, <span class="thin">according to the market.</span></h1>
+    <p class="lede">
+      A single yes-or-no price tells you almost nothing about how much risk you are carrying. This surface
+      asks the market the same question about every protocol at once — the annual probability of default —
+      and puts the answers side by side, so the comparison is the reading.
+    </p>
+  </header>
+
+  <section class="panel">
+    <div style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:flex-start">
+      <div>
+        <div class="mono small dim" style="letter-spacing:.12em">TRADING PERIOD · Q4 2026</div>
+        <h2 style="margin-top:8px;max-width:34ch">Annual probability of default, per protocol</h2>
+        <p class="small dim" style="margin-top:10px">
+          12 protocols priced · one collateral position covers every estimate simultaneously · closes 2026-12-31 23:59 UTC
+        </p>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><div class="tag cyan">Scalar · per protocol</div></div>
+    </div>
+
+    <hr class="sep" />
+
+    <div class="grid g4" style="gap:12px">
+      <div><div class="stat"><div class="lbl">Protocols priced</div><div class="num">12</div></div></div>
+      <div><div class="stat"><div class="lbl">Open interest</div><div class="num">$223.9<small>K</small></div></div></div>
+      <div><div class="stat"><div class="lbl">Agent share</div><div class="num">83<small>%</small></div></div></div>
+      <div><div class="stat"><div class="lbl">Widest spread</div><div class="num">4.2<small>pts</small></div></div></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>The board</h2>
+      <p>Colour carries the number, not a verdict. A 1.2% protocol and a 5.8% protocol are both "low" by equity standards and completely different when you size a position.</p>
+    </div>
+
+    <div class="heat">
+      <div class="cell" style="--o:.06;--c:#35d39a"><div class="sym">Aave v3</div><div class="pd">1.2%</div><div class="sub">$8.1k OI · −0.3</div></div>
+      <div class="cell" style="--o:.08;--c:#35d39a"><div class="sym">Morpho</div><div class="pd">1.6%</div><div class="sub">$6.4k OI · −0.1</div></div>
+      <div class="cell" style="--o:.10;--c:#00c8dc"><div class="sym">Lido</div><div class="pd">1.9%</div><div class="sub">$9.4k OI · 0.0</div></div>
+      <div class="cell" style="--o:.11;--c:#7c5cff"><div class="sym">Sky</div><div class="pd">2.1%</div><div class="sub">$9.7k OI · +0.2</div></div>
+      <div class="cell" style="--o:.13;--c:#7c5cff"><div class="sym">Compound v3</div><div class="pd">2.4%</div><div class="sub">$7.2k OI · 0.0</div></div>
+      <div class="cell" style="--o:.15;--c:#7c5cff"><div class="sym">Pendle</div><div class="pd">2.9%</div><div class="sub">$5.1k OI · +0.4</div></div>
+      <div class="cell" style="--o:.17;--c:#ffb347"><div class="sym">Ethena</div><div class="pd">3.4%</div><div class="sub">$11.3k OI · +0.7</div></div>
+      <div class="cell" style="--o:.19;--c:#ffb347"><div class="sym">Euler v2</div><div class="pd">3.8%</div><div class="sub">$4.8k OI · −0.2</div></div>
+      <div class="cell" style="--o:.21;--c:#ffb347"><div class="sym">Fluid</div><div class="pd">4.1%</div><div class="sub">$3.9k OI · +0.5</div></div>
+      <div class="cell" style="--o:.24;--c:#ff5c6e"><div class="sym">Usual</div><div class="pd">4.9%</div><div class="sub">$4.2k OI · +1.1</div></div>
+      <div class="cell" style="--o:.27;--c:#ff5c6e"><div class="sym">Resolv</div><div class="pd">5.3%</div><div class="sub">$2.6k OI · +0.3</div></div>
+      <div class="cell" style="--o:.30;--c:#ff5c6e"><div class="sym">Spark</div><div class="pd">5.8%</div><div class="sub">$3.1k OI · +0.9</div></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>Why a comparison beats a price</h2>
+      <p>The same collateral can price every protocol at once, so the output is a curve of estimates rather than twelve unrelated bets.</p>
+    </div>
+
+    <div class="grid g2" style="align-items:start">
+      <div class="panel">
+        <div class="bars">
+          <div class="bar-row"><div class="name">Spark</div><div class="track"><div class="fill" style="width:97%"></div></div><div class="pct">5.8%</div></div>
+          <div class="bar-row"><div class="name">Resolv</div><div class="track"><div class="fill" style="width:88%"></div></div><div class="pct">5.3%</div></div>
+          <div class="bar-row"><div class="name">Usual</div><div class="track"><div class="fill" style="width:82%"></div></div><div class="pct">4.9%</div></div>
+          <div class="bar-row"><div class="name">Fluid</div><div class="track"><div class="fill" style="width:68%"></div></div><div class="pct">4.1%</div></div>
+          <div class="bar-row"><div class="name">Euler v2</div><div class="track"><div class="fill" style="width:63%"></div></div><div class="pct">3.8%</div></div>
+          <div class="bar-row"><div class="name">Ethena</div><div class="track"><div class="fill" style="width:57%"></div></div><div class="pct">3.4%</div></div>
+          <div class="bar-row"><div class="name">Pendle</div><div class="track"><div class="fill" style="width:48%"></div></div><div class="pct">2.9%</div></div>
+          <div class="bar-row"><div class="name">Compound v3</div><div class="track"><div class="fill" style="width:40%"></div></div><div class="pct">2.4%</div></div>
+          <div class="bar-row"><div class="name">Sky</div><div class="track"><div class="fill" style="width:35%"></div></div><div class="pct">2.1%</div></div>
+          <div class="bar-row"><div class="name">Lido</div><div class="track"><div class="fill" style="width:32%"></div></div><div class="pct">1.9%</div></div>
+          <div class="bar-row"><div class="name">Morpho</div><div class="track"><div class="fill" style="width:27%"></div></div><div class="pct">1.6%</div></div>
+          <div class="bar-row"><div class="name">Aave v3</div><div class="track"><div class="fill" style="width:20%"></div></div><div class="pct">1.2%</div></div>
+        </div>
+        <p class="small dim" style="margin-top:16px">
+          One position, twelve estimates. Posting collateral once is what makes the ranking comparable —
+          the market is forced to price all twelve against the same budget.
+        </p>
+      </div>
+
+      <div>
+        <div class="panel" style="margin-bottom:14px">
+          <div class="kicker">Reading it</div>
+          <h3>Spread, not level</h3>
+          <p>
+            The useful output is the distance between protocols, not the absolute number. A desk sizing
+            exposure cares whether Spark is four times Aave's implied default probability, and that
+            comparison only exists because both were priced on one book.
+          </p>
+        </div>
+        <div class="panel" style="margin-bottom:14px">
+          <div class="kicker">Who moves the number</div>
+          <h3>Agents, mostly</h3>
+          <p>
+            Eighty-three percent of flow on this board is automated: agents that monitor governance
+            forums, oracle feeds and liquidity depth and reprice continuously. Humans set the position
+            sizes; machines keep the estimates current.
+          </p>
+        </div>
+        <div class="panel">
+          <div class="kicker">Settlement</div>
+          <h3>What counts as default</h3>
+          <p>
+            The resolution clause names the triggering events — a shortfall in redemptions, a governance
+            freeze past the stated window, an oracle failure that halts withdrawals. It is written before
+            the market opens and it names who decides.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="docnote">
+      <b>Design note.</b> This interface avoids the gauge-and-speedometer vocabulary that risk products
+      default to. A ranked board with a numeric colour scale answers the actual question — <em>compared to
+      what?</em> — and keeps twelve estimates readable on a phone without horizontal scrolling.
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div>Seer · interface 05 of six</div>
+    <div><a href="index.html">Ecosystem</a> · <a href="app.html">App</a> · <a href="deep.html">Deep</a> · <a href="futarchy.html">Futarchy</a> · <a href="opportunity.html">Opportunity</a></div>
+  </footer>
+</div>
+
+</body>
+</html>
