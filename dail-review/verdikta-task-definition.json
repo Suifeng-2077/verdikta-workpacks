@@ -1,0 +1,11 @@
+{
+  "_note": "Payload for POST https://bounties.verdikta.org/api/jobs/create. Held until capital lands: calling create makes a real job record that shows as ORPHANED until funded, so it is not a dry-run. creatorAssessmentWindowHours stays 0 so no split-payment settings are required.",
+  "title": "Verify five on-chain claims about the Poidh and Verdikta contracts on Base",
+  "workProductType": "research",
+  "bountyAmount": "0.0041",
+  "submissionWindowHours": 24,
+  "creatorAssessmentWindowHours": 0,
+  "threshold": 80,
+  "publicSubmissions": true,
+  "description": "Check five factual claims against Base mainnet and report each one. Everything you need is public: no wallet, no key and no payment is required to read a chain, and public nodes are free.\n\nTHE FIVE CLAIMS\n\n1. The contract 0x5555fa783936c260f77385b4e153b9725fef1719 exposes a bountyCounter, and that counter is greater than 500.\n\n2. Poidh bounty #1489 as listed on poidh.xyz is stored on chain under a DIFFERENT id than the number in its URL. Report both numbers and show how you established the mapping.\n\n3. The total ETH held by the Verdikta escrow contract 0xA741eFf41Bcf14793E61CEbB4179E05C9124D3f6 at the block you read is greater than 0.01 ETH.\n\n4. The wallet 0xb380Fd71D9a1cF470bddC33113fA36560a3df622 holds exactly 1.000000 USDC (contract 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913) as of the block you read. If it holds a different amount, say what it holds.\n\n5. The Uniswap V3 pool 0xb4CB800910B228ED3d0834cF79D697127BBB00e5 (USDC/WETH, 0.01% fee) reports a slot0 tick. Report the tick you read and the implied USDC price of one ETH at that tick, showing the arithmetic.\n\nWHAT TO DELIVER\n\nOne Markdown report. For each claim: the claim as stated, a verdict of exactly CONFIRMED, REFUTED or UNVERIFIABLE, the evidence that decides it (a transaction hash, or the function called with the block number and the value actually returned), and the method used. End with a coverage note naming anything you could not check and why.\n\nA claim you cannot check is UNVERIFIABLE with a reason, and that is an acceptable answer. An invented figure is not.\n\nReference values are deliberately not supplied. Reading the chain is the task."
+}
