@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Seer App — every market in one table</title>
+<meta name="description" content="The general explorer for all Seer markets: find and trade across market types." />
+<style>
+/* ============================================================
+   Seer — Six Interfaces
+   Design system derived from the Electric Foundation brand kit:
+   deep neutral ground, violet as the single accent, cyan only
+   where a second signal is genuinely needed.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:            #08080c;
+  --bg-soft:       #0b0b12;
+  --panel:         #0f0f17;
+  --panel-2:       #131320;
+  --line:          rgba(255, 255, 255, 0.07);
+  --line-strong:   rgba(255, 255, 255, 0.14);
+  --ink:           #f2f2f7;
+  --ink-2:         #a9a9bd;
+  --ink-3:         #6d6d80;
+  --violet:        #7c5cff;
+  --violet-2:      #9b82ff;
+  --violet-dim:    rgba(124, 92, 255, 0.14);
+  --cyan:          #00c8dc;
+  --cyan-dim:      rgba(0, 200, 220, 0.12);
+  --green:         #35d39a;
+  --red:           #ff5c6e;
+  --amber:         #ffb347;
+  --r:             14px;
+  --r-sm:          9px;
+  --sans:          'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+  --body:          'Inter', 'Segoe UI', system-ui, sans-serif;
+  --mono:          'JetBrains Mono', ui-monospace, 'Cascadia Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background:
+    radial-gradient(1100px 620px at 78% -12%, rgba(124, 92, 255, 0.16), transparent 62%),
+    radial-gradient(760px 460px at 6% 104%, rgba(0, 200, 220, 0.07), transparent 60%),
+    var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* faint engineering grid, keeps large dark areas from looking flat */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 72px 72px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap { position: relative; z-index: 1; max-width: 1220px; margin: 0 auto; padding: 0 28px 96px; }
+
+/* ---------- top bar ---------- */
+.nav {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 26px;
+  padding: 16px 0 15px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(8, 8, 12, 0.82);
+  backdrop-filter: blur(14px);
+}
+.brand { display: flex; align-items: center; gap: 11px; font-family: var(--sans); font-weight: 600; letter-spacing: -0.01em; }
+.brand svg { display: block; }
+.nav a {
+  color: var(--ink-3); text-decoration: none; font-size: 13.5px; font-family: var(--sans);
+  transition: color 0.16s;
+}
+.nav a:hover { color: var(--ink); }
+.nav a.on { color: var(--ink); }
+.nav .spacer { flex: 1; }
+.nav .pill {
+  font-size: 11.5px; font-family: var(--mono); letter-spacing: 0.04em;
+  color: var(--violet-2); border: 1px solid rgba(124, 92, 255, 0.42);
+  padding: 4px 10px; border-radius: 999px; background: var(--violet-dim);
+}
+
+/* ---------- headings ---------- */
+.eyebrow {
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--violet-2); margin-bottom: 16px;
+}
+h1 {
+  font-family: var(--sans); font-weight: 600; letter-spacing: -0.028em;
+  font-size: clamp(34px, 5.2vw, 60px); line-height: 1.05;
+}
+h1 .thin { color: var(--ink-3); font-weight: 400; }
+h2 {
+  font-family: var(--sans); font-weight: 600; letter-spacing: -0.02em;
+  font-size: clamp(22px, 2.6vw, 30px); line-height: 1.2;
+}
+h3 { font-family: var(--sans); font-weight: 600; font-size: 17px; letter-spacing: -0.01em; }
+.lede { color: var(--ink-2); font-size: clamp(15px, 1.6vw, 18px); max-width: 62ch; margin-top: 18px; }
+
+/* ---------- hero ---------- */
+.hero { padding: 84px 0 60px; }
+.hero .actions { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--sans); font-size: 14px; font-weight: 500;
+  padding: 11px 20px; border-radius: var(--r-sm);
+  border: 1px solid var(--line-strong); background: transparent; color: var(--ink);
+  text-decoration: none; transition: background 0.16s, border-color 0.16s, transform 0.16s;
+}
+.btn:hover { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.24); }
+.btn.primary {
+  background: var(--violet); border-color: var(--violet); color: #ffffff; font-weight: 600;
+}
+.btn.primary:hover { background: var(--violet-2); border-color: var(--violet-2); transform: translateY(-1px); }
+
+/* ---------- grid + cards ---------- */
+.grid { display: grid; gap: 14px; }
+.g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.card {
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border: 1px solid var(--line); border-radius: var(--r);
+  padding: 22px; position: relative; overflow: hidden;
+  transition: border-color 0.18s, transform 0.18s;
+}
+.card:hover { border-color: rgba(124, 92, 255, 0.38); }
+a.card { text-decoration: none; color: inherit; display: block; }
+a.card:hover { transform: translateY(-2px); }
+.card .kicker {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px;
+}
+.card p { color: var(--ink-2); font-size: 13.5px; margin-top: 9px; }
+.card .go { margin-top: 16px; font-size: 12.5px; font-family: var(--mono); color: var(--violet-2); }
+
+.card.feature { grid-column: span 2; }
+@media (max-width: 900px) {
+  .g3, .g2, .g4 { grid-template-columns: 1fr; }
+  .card.feature { grid-column: span 1; }
+}
+
+/* ---------- stat ---------- */
+.stat .num {
+  font-family: var(--sans); font-weight: 600; font-size: 30px;
+  letter-spacing: -0.03em; font-variant-numeric: tabular-nums;
+}
+.stat .num small { font-size: 14px; color: var(--ink-2); font-weight: 400; margin-left: 3px; }
+.stat .lbl { font-size: 11.5px; font-family: var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+.up { color: var(--green); }
+.down { color: var(--red); }
+
+/* ---------- table ---------- */
+.table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.table th {
+  text-align: left; font-family: var(--mono); font-size: 10.5px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3);
+  padding: 0 14px 12px; border-bottom: 1px solid var(--line);
+}
+.table td { padding: 13px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); white-space: nowrap; }
+.table td.q { white-space: normal; }
+.table tr:last-child td { border-bottom: none; }
+.table tbody tr { transition: background 0.14s; }
+.table tbody tr:hover { background: rgba(255, 255, 255, 0.026); }
+.table .q { color: var(--ink); font-weight: 500; }
+.table .num { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink-2); }
+
+.tag {
+  display: inline-block; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.07em;
+  text-transform: uppercase; padding: 2.5px 8px; border-radius: 999px;
+  border: 1px solid var(--line-strong); color: var(--ink-3);
+}
+.tag.violet { color: var(--violet-2); border-color: rgba(124, 92, 255, 0.4); background: var(--violet-dim); }
+.tag.cyan { color: var(--cyan); border-color: rgba(0, 200, 220, 0.4); background: var(--cyan-dim); }
+.tag.green { color: var(--green); border-color: rgba(53, 211, 154, 0.4); }
+
+/* ---------- probability bar ---------- */
+.prob { display: flex; align-items: center; gap: 10px; }
+.prob .track { flex: 1; height: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.prob .fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--violet), var(--violet-2)); }
+.prob .fill.cy { background: linear-gradient(90deg, #0aa9bb, var(--cyan)); }
+.prob .val { font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; min-width: 46px; text-align: right; }
+
+/* ---------- layout with sidebar ---------- */
+.split { display: grid; grid-template-columns: 232px minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
+
+.side { position: sticky; top: 78px; }
+.side .group { margin-bottom: 22px; }
+.side .group h4 {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: 9px;
+}
+.side .opt {
+  display: flex; justify-content: space-between; gap: 8px;
+  padding: 7px 10px; border-radius: 7px; font-size: 13px; color: var(--ink-2); cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+}
+.side .opt:hover { background: rgba(255, 255, 255, 0.04); color: var(--ink); }
+.side .opt.on { background: var(--violet-dim); color: var(--violet-2); }
+.side .opt .n { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+
+/* ---------- section spacing ---------- */
+.sec { margin-top: 66px; }
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 18px; margin-bottom: 20px; flex-wrap: wrap; }
+.sec-head p { color: var(--ink-3); font-size: 13px; max-width: 48ch; }
+
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 22px; }
+
+/* ---------- bars chart ---------- */
+.bars { display: flex; flex-direction: column; gap: 11px; }
+.bar-row { display: grid; grid-template-columns: 168px minmax(0, 1fr) 58px; gap: 12px; align-items: center; font-size: 13px; }
+@media (max-width: 620px) { .bar-row { grid-template-columns: 104px minmax(0, 1fr) 52px; } }
+.bar-row .name { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-row .track { height: 9px; background: rgba(255, 255, 255, 0.06); border-radius: 999px; overflow: hidden; }
+.bar-row .fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #5b3fd6, var(--violet-2)); }
+.bar-row .pct { font-family: var(--mono); font-size: 12px; text-align: right; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+/* ---------- risk heat cells ---------- */
+.heat { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 10px; }
+.heat .cell {
+  border: 1px solid var(--line); border-radius: var(--r-sm); padding: 14px;
+  background: var(--panel-2); position: relative; overflow: hidden;
+}
+.heat .cell::after {
+  content: ''; position: absolute; inset: 0; opacity: var(--o, 0.1);
+  background: var(--c, var(--violet)); pointer-events: none;
+}
+.heat .cell .sym { font-family: var(--sans); font-weight: 600; font-size: 15px; position: relative; z-index: 1; }
+.heat .cell .pd { font-family: var(--mono); font-size: 21px; margin-top: 6px; position: relative; z-index: 1; font-variant-numeric: tabular-nums; }
+.heat .cell .sub { font-size: 11px; color: var(--ink-3); position: relative; z-index: 1; margin-top: 2px; }
+
+/* ---------- comparison columns ---------- */
+.versus { display: grid; grid-template-columns: 1fr 68px 1fr; gap: 14px; align-items: stretch; }
+@media (max-width: 760px) { .versus { grid-template-columns: 1fr; } }
+.versus .vs {
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 12px; color: var(--ink-3);
+}
+.verdict {
+  border-radius: var(--r); border: 1px solid rgba(53, 211, 154, 0.34);
+  background: rgba(53, 211, 154, 0.07); padding: 18px 22px;
+}
+
+/* ---------- leaderboard ---------- */
+.rank { display: flex; flex-direction: column; }
+.rank .row {
+  display: grid; grid-template-columns: 40px minmax(0, 1fr) 120px 92px;
+  gap: 14px; align-items: center; padding: 13px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-size: 13.5px;
+}
+@media (max-width: 640px) { .rank .row { grid-template-columns: 30px minmax(0, 1fr) 70px; } .rank .row .hide-sm { display: none; } }
+.rank .row:last-child { border-bottom: none; }
+.rank .i { font-family: var(--mono); color: var(--ink-3); font-size: 12px; }
+.rank .nm { font-weight: 500; }
+.rank .nm span { color: var(--ink-3); font-weight: 400; font-size: 12px; display: block; margin-top: 2px; }
+
+/* ---------- footer ---------- */
+.foot {
+  margin-top: 92px; padding-top: 26px; border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  color: var(--ink-3); font-size: 12.5px;
+}
+.foot a { color: var(--ink-3); text-decoration: none; }
+.foot a:hover { color: var(--violet-2); }
+
+/* ---------- misc ---------- */
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.dim { color: var(--ink-3); }
+.small { font-size: 12.5px; }
+hr.sep { border: none; border-top: 1px solid var(--line); margin: 26px 0; }
+
+.docnote {
+  border-left: 2px solid var(--violet); padding: 10px 0 10px 16px;
+  color: var(--ink-2); font-size: 13px; margin-top: 26px;
+}
+.docnote b { color: var(--ink); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="nav">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+        <path d="M13 1.6 24 7.6v10.8L13 24.4 2 18.4V7.6z" stroke="#7c5cff" stroke-width="1.4"/>
+        <path d="M13 1.6v22.8M2 7.6l11 6 11-6" stroke="#7c5cff" stroke-width="0.9" opacity="0.5"/>
+        <circle cx="13" cy="13" r="2.6" fill="#7c5cff"/>
+      </svg>
+      Seer
+    </div>
+    <a href="index.html">Ecosystem</a>
+    <a class="on" href="app.html">App</a>
+    <a href="deep.html">Deep</a>
+    <a href="futarchy.html">Futarchy</a>
+    <a href="opportunity.html">Opportunity</a>
+    <a href="risk.html">Risk Pricing</a>
+    <div class="spacer"></div>
+    <span class="pill">0x7a3f…9c21</span>
+  </nav>
+
+  <header class="hero" style="padding:56px 0 34px">
+    <div class="eyebrow">Interface 01 · Explorer</div>
+    <h1 style="font-size:clamp(30px,4vw,46px)">Every market, one table.</h1>
+    <p class="lede">
+      Seer runs four market structures and three specialist interfaces on top of them. This is the
+      screen that ignores the differences: search a question, read its price, trade it, without
+      caring which engine settles it.
+    </p>
+  </header>
+
+  <section class="grid g4" aria-label="market stats">
+    <div class="card stat"><div class="lbl">Markets tracked</div><div class="num">1,284</div></div>
+    <div class="card stat"><div class="lbl">Open interest</div><div class="num">$4.19<small>M</small></div></div>
+    <div class="card stat"><div class="lbl">Volume · 24h</div><div class="num">$612<small>K</small></div></div>
+    <div class="card stat"><div class="lbl">Resolving · 7d</div><div class="num">86</div></div>
+  </section>
+
+  <section class="sec split" style="margin-top:38px">
+
+    <aside class="side">
+      <div class="group">
+        <h4>Structure</h4>
+        <div class="opt on"><span>All structures</span><span class="n">1284</span></div>
+        <div class="opt"><span>Categorical</span><span class="n">812</span></div>
+        <div class="opt"><span>Multi-categorical</span><span class="n">96</span></div>
+        <div class="opt"><span>Scalar</span><span class="n">214</span></div>
+        <div class="opt"><span>Conditional</span><span class="n">48</span></div>
+      </div>
+      <div class="group">
+        <h4>Specialist</h4>
+        <div class="opt"><span>Deep</span><span class="n">63</span></div>
+        <div class="opt"><span>Futarchy</span><span class="n">31</span></div>
+        <div class="opt"><span>Opportunity</span><span class="n">19</span></div>
+        <div class="opt"><span>Risk</span><span class="n">12</span></div>
+      </div>
+      <div class="group">
+        <h4>Status</h4>
+        <div class="opt on"><span>Open</span><span class="n">1173</span></div>
+        <div class="opt"><span>Awaiting report</span><span class="n">53</span></div>
+        <div class="opt"><span>In dispute</span><span class="n">18</span></div>
+        <div class="opt"><span>Resolved</span><span class="n">40</span></div>
+      </div>
+      <div class="group">
+        <h4>Order by</h4>
+        <div class="opt"><span>Volume</span></div>
+        <div class="opt on"><span>Ending soon</span></div>
+        <div class="opt"><span>Liquidity</span></div>
+      </div>
+    </aside>
+
+    <div>
+      <div class="panel" style="padding:0;overflow:hidden">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="padding-left:22px">Question</th>
+              <th>Structure</th>
+              <th style="width:190px">Market price</th>
+              <th>Volume</th>
+              <th>Ends</th>
+              <th>Agents</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="q" style="padding-left:22px">Will the October grant round fund more than 14 of 60 proposals?</td>
+              <td><span class="tag violet">Deep</span></td>
+              <td><div class="prob"><div class="track"><div class="fill" style="width:62%"></div></div><div class="val">62%</div></div></td>
+              <td class="num">$184.2k</td>
+              <td class="num">2d 14h</td>
+              <td class="num">71%</td>
+            </tr>
+            <tr>
+              <td class="q" style="padding-left:22px">GNO/wstETH: does the proposal beat the counterfactual in 30 days?</td>
+              <td><span class="tag violet">Futarchy</span></td>
+              <td><div class="prob"><div class="track"><div class="fill" style="width:54%"></div></div><div class="val">54%</div></div></td>
+              <td class="num">$96.8k</td>
+              <td class="num">9d 02h</td>
+              <td class="num">44%</td>
+            </tr>
+            <tr>
+              <td class="q" style="padding-left:22px">Which design entry wins the Seer rebrand round?</td>
+              <td><span class="tag cyan">Opportunity</span></td>
+              <td><div class="prob"><div class="track"><div class="fill cy" style="width:31%"></div></div><div class="val">31%</div></div></td>
+              <td class="num">$41.5k</td>
+              <td class="num">5d 08h</td>
+              <td class="num">58%</td>
+            </tr>
+            <tr>
+              <td class="q" style="padding-left:22px">Annual default probability, Aave v3 (Base) — Q4 2026</td>
+              <td><span class="tag cyan">Risk</span></td>
+              <td><div class="prob"><div class="track"><div class="fill cy" style="width:12%"></div></div><div class="val">1.2%</div></div></td>
+              <td class="num">$223.9k</td>
+              <td class="num">74d 00h</td>
+              <td class="num">83%</td>
+            </tr>
+            <tr>
+              <td class="q" style="padding-left:22px">Will ETH close above $4,000 on 31 December 2026?</td>
+              <td><span class="tag">Categorical</span></td>
+              <td><div class="prob"><div class="track"><div class="fill" style="width:38%"></div></div><div class="val">38%</div></div></td>
+              <td class="num">$318.4k</td>
+              <td class="num">74d 00h</td>
+              <td class="num">29%</td>
+            </tr>
+            <tr>
+              <td class="q" style="padding-left:22px">Median final award, round 42 — how many proposals get funded?</td>
+              <td><span class="tag">Scalar</span></td>
+              <td><div class="prob"><div class="track"><div class="fill" style="width:47%"></div></div><div class="val">11–15</div></td>
+              <td class="num">$28.1k</td>
+              <td class="num">11d 06h</td>
+              <td class="num">36%</td>
+            </tr>
+            <tr>
+              <td class="q" style="padding-left:22px">Which two of these six committees will publish before Friday?</td>
+              <td><span class="tag">Multi-cat</span></td>
+              <td><div class="prob"><div class="track"><div class="fill" style="width:22%"></div></div><div class="val">22%</div></td>
+              <td class="num">$12.6k</td>
+              <td class="num">3d 21h</td>
+              <td class="num">61%</td>
+            </tr>
+            <tr>
+              <td class="q" style="padding-left:22px">Futarchy test: should the treasury extend the LP incentive program?</td>
+              <td><span class="tag violet">Futarchy</span></td>
+              <td><div class="prob"><div class="track"><div class="fill" style="width:49%"></div></div><div class="val">49%</div></td>
+              <td class="num">$71.0k</td>
+              <td class="num">1d 03h</td>
+              <td class="num">40%</td>
+            </tr>
+            <tr>
+              <td class="q" style="padding-left:22px">Annual default probability, Ethena — Q4 2026</td>
+              <td><span class="tag cyan">Risk</span></td>
+              <td><div class="prob"><div class="track"><div class="fill cy" style="width:34%"></div></div><div class="val">3.4%</div></div></td>
+              <td class="num">$151.3k</td>
+              <td class="num">74d 00h</td>
+              <td class="num">79%</td>
+            </tr>
+            <tr>
+              <td class="q" style="padding-left:22px">Will the review panel publish scores before the 20th?</td>
+              <td><span class="tag">Categorical</span></td>
+              <td><div class="prob"><div class="track"><div class="fill" style="width:77%"></div></div><div class="val">77%</div></div></td>
+              <td class="num">$9.4k</td>
+              <td class="num">6d 00h</td>
+              <td class="num">24%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid g3" style="margin-top:16px">
+        <div class="card">
+          <div class="kicker">Cross-surface</div>
+          <h3>One position, six views</h3>
+          <p>A risk position taken on the Risk board appears here with the same id, so the explorer doubles as the audit trail.</p>
+        </div>
+        <div class="card">
+          <div class="kicker">Search</div>
+          <h3>Query by structure</h3>
+          <p>Filtering is by market structure first, not by product. Users arrive with a question, not with an engine preference.</p>
+        </div>
+        <div class="card">
+          <div class="kicker">Agents</div>
+          <h3>Readable to machines</h3>
+          <p>Every row exposes the same fields the trading agents use, so a human and a bot see an identical book.</p>
+        </div>
+      </div>
+
+      <div class="docnote">
+        <b>Design note.</b> The explorer deliberately has no hero illustration and no editorial cards at the top —
+        density is the feature. Everything above the table is a filter or a number you would want before
+        scanning 1,284 markets.
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div>Seer · interface 01 of six</div>
+    <div><a href="index.html">Ecosystem</a> · <a href="deep.html">Deep</a> · <a href="futarchy.html">Futarchy</a> · <a href="opportunity.html">Opportunity</a> · <a href="risk.html">Risk</a></div>
+  </footer>
+</div>
+
+</body>
+</html>
