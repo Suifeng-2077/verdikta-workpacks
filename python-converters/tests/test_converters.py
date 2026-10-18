@@ -9,6 +9,7 @@ import pytest
 
 from csv2json import main as csv2json_main
 from csv2json import read_records
+from csv2json import render
 from json2csv import field_order, load_records, to_csv
 
 
@@ -146,3 +147,98 @@ def test_round_trip_csv_then_json(tmp_path):
     back = to_csv(records, field_order(records, None), ",")
     assert '"a, b"' in back
     assert "line\nbreak" in back
+
+# ---------- extended output formats and error taxonomy ----------
+
+def test_format_jsonl_one_object_per_line(tmp_path):
+    f = tmp_path / "a.csv"
+    f.write_text("id,name\n1,ann\n2,bob\n", encoding="utf-8")
+    records, _, _ = read_records(f)
+    out = render(records, "jsonl", None, 0).strip().split("\n")
+    assert len(out) == 2
+    assert json.loads(out[0]) == {"id": "1", "name": "ann"}
+
+
+def test_format_keyed_uses_chosen_column(tmp_path):
+    f = tmp_path / "a.csv"
+    f.write_text("id,name\n1,ann\n2,bob\n", encoding="utf-8")
+    records, _, _ = read_records(f)
+    keyed = json.loads(render(records, "keyed", "id", 0))
+    assert keyed["2"]["name"] == "bob"
+
+
+def test_format_keyed_without_key_by_fails(tmp_path):
+    f = tmp_path / "a.csv"
+    f.write_text("id\n1\n", encoding="utf-8")
+    records, _, _ = read_records(f)
+    with pytest.raises(SystemExit) as exc:
+        render(records, "keyed", None, 0)
+    assert "--key-by" in str(exc.value)
+
+
+def test_key_by_missing_column_fails(tmp_path):
+    f = tmp_path / "a.csv"
+    f.write_text("id\n1\n", encoding="utf-8")
+    records, _, _ = read_records(f)
+    with pytest.raises(SystemExit) as exc:
+        render(records, "keyed", "nope", 0)
+    assert "not in the header" in str(exc.value)
+
+
+def test_types_inference_is_opt_in(tmp_path):
+    f = tmp_path / "a.csv"
+    f.write_text("n,flag,word\n42,true,ann\n", encoding="utf-8")
+    plain, _, _ = read_records(f)
+    typed, _, _ = read_records(f, types=True)
+    assert plain[0] == {"n": "42", "flag": "true", "word": "ann"}
+    assert typed[0] == {"n": 42, "flag": True, "word": "ann"}
+
+
+def test_null_empty_option(tmp_path):
+    f = tmp_path / "a.csv"
+    f.write_text("a,b\n1,\n", encoding="utf-8")
+    nulled, _, _ = read_records(f, null_empty=True)
+    assert nulled[0]["b"] is None
+
+
+def test_duplicate_header_is_rejected(tmp_path):
+    f = tmp_path / "a.csv"
+    f.write_text("id,id\n1,2\n", encoding="utf-8")
+    with pytest.raises(SystemExit) as exc:
+        read_records(f)
+    assert "duplicate header" in str(exc.value)
+
+
+def test_header_only_file_fails_clearly(tmp_path):
+    f = tmp_path / "a.csv"
+    f.write_text("id,name\n", encoding="utf-8")
+    with pytest.raises(SystemExit) as exc:
+        read_records(f)
+    assert "header-only" in str(exc.value)
+
+
+def test_nul_bytes_are_reported(tmp_path):
+    f = tmp_path / "a.csv"
+    f.write_bytes(b"id,name\n1,an\x00n\n")
+    with pytest.raises(SystemExit) as exc:
+        read_records(f)
+    assert "NUL bytes" in str(exc.value)
+
+
+def test_utf16_file_gets_the_nul_hint(tmp_path):
+    """A UTF-16 file read as UTF-8 trips the NUL check first, and that message is the more useful one."""
+    f = tmp_path / "a.csv"
+    f.write_bytes("id\né\n".encode("utf-16"))
+    with pytest.raises(SystemExit) as exc:
+        read_records(f, encoding="utf-8")
+    assert "NUL bytes" in str(exc.value)
+    assert "utf-16" in str(exc.value)
+
+
+def test_wrong_encoding_names_the_offset(tmp_path):
+    """An invalid UTF-8 byte with no NUL in it must reach the decode error and name the offset."""
+    f = tmp_path / "a.csv"
+    f.write_bytes(b"id\n\x80\n")
+    with pytest.raises(SystemExit) as exc:
+        read_records(f, encoding="utf-8")
+    assert "bad byte at offset" in str(exc.value)
