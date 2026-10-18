@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Futarchy — price the outcome, then decide</title>
+<meta name="description" content="Conditional markets that forecast what success looks like if a proposal passes versus if it fails." />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="nav">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+        <path d="M13 1.6 24 7.6v10.8L13 24.4 2 18.4V7.6z" stroke="#7c5cff" stroke-width="1.4"/>
+        <path d="M13 1.6v22.8M2 7.6l11 6 11-6" stroke="#7c5cff" stroke-width="0.9" opacity="0.5"/>
+        <circle cx="13" cy="13" r="2.6" fill="#7c5cff"/>
+      </svg>
+      Seer
+    </div>
+    <a href="index.html">Ecosystem</a>
+    <a href="app.html">App</a>
+    <a href="deep.html">Deep</a>
+    <a class="on" href="futarchy.html">Futarchy</a>
+    <a href="opportunity.html">Opportunity</a>
+    <a href="risk.html">Risk Pricing</a>
+    <div class="spacer"></div>
+    <span class="pill">31 open proposals</span>
+  </nav>
+
+  <header class="hero" style="padding:56px 0 30px">
+    <div class="eyebrow">Interface 03 · Conditional markets</div>
+    <h1 style="font-size:clamp(30px,4vw,46px)">Two futures.<br /><span class="thin">One decision to make.</span></h1>
+    <p class="lede">
+      Futarchy does not ask whether a proposal is good. It asks what a chosen measure of success will
+      look like if the proposal passes, and what it will look like if it fails — then lets the two prices
+      argue. The market supplies information to the decision; it does not take the decision.
+    </p>
+  </header>
+
+  <section class="panel">
+    <div style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:flex-start">
+      <div>
+        <div class="mono small dim" style="letter-spacing:.12em">PROPOSAL · GNO-118</div>
+        <h2 style="margin-top:8px;max-width:30ch">Extend the LP incentive program by twelve months at the current subsidy rate</h2>
+        <p class="small dim" style="margin-top:10px">
+          Success metric: <span class="mono" style="color:var(--ink-2)">GNO / wstETH</span> spot against the ETH counterfactual ·
+          Trading closes 2026-10-20 23:59 UTC · Measure read 30 days after close
+        </p>
+      </div>
+      <div class="tag violet">Conditional</div>
+    </div>
+
+    <hr class="sep" />
+
+    <div class="versus">
+      <div class="card" style="border-color:rgba(53,211,154,.28)">
+        <div class="kicker" style="color:var(--green)">If the proposal passes</div>
+        <h3>YES_GNO / YES_wstETH</h3>
+        <div class="stat" style="margin-top:14px"><div class="num up">1.0842</div></div>
+        <p class="small dim" style="margin-top:6px">Implied 30-day return vs counterfactual: <span class="up">+8.42%</span></p>
+        <div class="prob" style="margin-top:16px">
+          <div class="track"><div class="fill cy" style="width:58%"></div></div>
+          <div class="val">58%</div>
+        </div>
+        <p class="small dim" style="margin-top:8px">Share of traders on the pass side</p>
+      </div>
+
+      <div class="vs">VS</div>
+
+      <div class="card" style="border-color:rgba(255,92,110,.26)">
+        <div class="kicker" style="color:var(--red)">If the proposal fails</div>
+        <h3>NO_GNO / NO_wstETH</h3>
+        <div class="stat" style="margin-top:14px"><div class="num down">1.0391</div></div>
+        <p class="small dim" style="margin-top:6px">Implied 30-day return vs counterfactual: <span class="down">+3.91%</span></p>
+        <div class="prob" style="margin-top:16px">
+          <div class="track"><div class="fill" style="width:42%"></div></div>
+          <div class="val">42%</div>
+        </div>
+        <p class="small dim" style="margin-top:8px">Share of traders on the fail side</p>
+      </div>
+    </div>
+
+    <div class="verdict" style="margin-top:16px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:center">
+      <div>
+        <div class="mono small" style="color:var(--green);letter-spacing:.1em">CONDITION MET</div>
+        <div style="margin-top:6px;font-size:14px">YES price 1.0842 exceeds NO price 1.0391 — the conditional market favours passing.</div>
+      </div>
+      <div class="stat" style="text-align:right">
+        <div class="lbl">Edge</div>
+        <div class="num" style="font-size:24px">+4.51<small>%</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>How the two prices are constructed</h2>
+      <p>The same underlying pair, split into two conditional branches. Neither branch is a vote — both are forecasts of a measurable number.</p>
+    </div>
+    <div class="grid g3">
+      <div class="card">
+        <div class="kicker">Step 1</div>
+        <h3>Pick the measure</h3>
+        <p>The measure must be observable, dated, and outside the control of whoever benefits from the outcome. Here: the GNO/wstETH ratio, read 30 days after trading closes.</p>
+      </div>
+      <div class="card">
+        <div class="kicker">Step 2</div>
+        <h3>Split the collateral</h3>
+        <p>One unit of collateral becomes one YES token and one NO token. Trading the pair is trading the two futures against each other, not betting on a yes-or-no event.</p>
+      </div>
+      <div class="card">
+        <div class="kicker">Step 3</div>
+        <h3>Compare, then decide</h3>
+        <p>If the pass-branch price is higher, the market expects the proposal to do better than not passing it. The DAO still votes — with a price attached to each future.</p>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:16px;padding:0;overflow:hidden">
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="padding-left:22px">Open futarchy test</th>
+            <th>Measure</th>
+            <th>Pass</th>
+            <th>Fail</th>
+            <th>Edge</th>
+            <th>Closes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="q" style="padding-left:22px">Extend LP incentives · GNO-118</td><td class="num">GNO/wstETH</td><td class="num">1.0842</td><td class="num">1.0391</td><td class="num up">+4.51%</td><td class="num">1d 03h</td></tr>
+          <tr><td class="q" style="padding-left:22px">Raise the grants ceiling · GNO-121</td><td class="num">Treasury runway</td><td class="num">1.0176</td><td class="num">1.0233</td><td class="num down">−0.57%</td><td class="num">4d 11h</td></tr>
+          <tr><td class="q" style="padding-left:22px">Fund the security retainer · GNO-124</td><td class="num">Incident cost</td><td class="num">0.9820</td><td class="num">1.0410</td><td class="num down">−5.90%</td><td class="num">7d 00h</td></tr>
+          <tr><td class="q" style="padding-left:22px">Change the fee split · GNO-127</td><td class="num">Protocol revenue</td><td class="num">1.0504</td><td class="num">1.0188</td><td class="num up">+3.16%</td><td class="num">12d 06h</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="docnote">
+      <b>Design note.</b> The two branches share one visual frame with a verdict strip underneath, so a
+      reader who never learns the word "futarchy" can still read the answer: pass price above fail price.
+      Percentages are paired with raw ratios because a DAO member will want to argue about the number,
+      not about the colour.
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div>Seer · interface 03 of six</div>
+    <div><a href="index.html">Ecosystem</a> · <a href="app.html">App</a> · <a href="deep.html">Deep</a> · <a href="opportunity.html">Opportunity</a> · <a href="risk.html">Risk</a></div>
+  </footer>
+</div>
+
+</body>
+</html>
