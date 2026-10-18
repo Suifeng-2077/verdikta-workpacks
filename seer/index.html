@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Seer — One protocol, six interfaces</title>
+<meta name="description" content="Seer is the prediction protocol underneath Deep, Futarchy, Opportunity Markets and Risk Pricing." />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="nav">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+        <path d="M13 1.6 24 7.6v10.8L13 24.4 2 18.4V7.6z" stroke="#7c5cff" stroke-width="1.4"/>
+        <path d="M13 1.6v22.8M2 7.6l11 6 11-6" stroke="#7c5cff" stroke-width="0.9" opacity="0.5"/>
+        <circle cx="13" cy="13" r="2.6" fill="#7c5cff"/>
+      </svg>
+      Seer
+    </div>
+    <a class="on" href="index.html">Ecosystem</a>
+    <a href="app.html">App</a>
+    <a href="deep.html">Deep</a>
+    <a href="futarchy.html">Futarchy</a>
+    <a href="opportunity.html">Opportunity</a>
+    <a href="risk.html">Risk Pricing</a>
+    <div class="spacer"></div>
+    <span class="pill">EF · interface concept</span>
+  </nav>
+
+  <header class="hero">
+    <div class="eyebrow">Seer — prediction protocol</div>
+    <h1>One protocol.<br /><span class="thin">Six ways to see what happens next.</span></h1>
+    <p class="lede">
+      Seer is not a single app. It is the settlement layer that six interfaces run on: a general
+      explorer, a market for many-outcome questions, a futarchy engine, a submission-ranking market,
+      a cross-protocol risk board — and this page, which explains how they fit together.
+    </p>
+    <div class="actions">
+      <a class="btn primary" href="app.html">Open the explorer</a>
+      <a class="btn" href="#interfaces">See all six interfaces</a>
+    </div>
+  </header>
+
+  <section class="grid g4" aria-label="network stats">
+    <div class="card stat"><div class="lbl">Open markets</div><div class="num">1,284</div></div>
+    <div class="card stat"><div class="lbl">Settled this month</div><div class="num">412</div></div>
+    <div class="card stat"><div class="lbl">Volume · 30d</div><div class="num">$18.6<small>M</small></div></div>
+    <div class="card stat"><div class="lbl">Agent share of flow</div><div class="num">37<small>%</small></div></div>
+  </section>
+
+  <section class="sec" id="interfaces">
+    <div class="sec-head">
+      <h2>Six interfaces, one book of liquidity</h2>
+      <p>
+        Each surface answers a different question. They share collateral, resolution sources and
+        the same conditional-token core, so a position opened on one screen is legible on every other.
+      </p>
+    </div>
+
+    <div class="grid g3">
+      <a class="card" href="app.html">
+        <div class="kicker">01 · Explorer</div>
+        <h3>Seer App</h3>
+        <p>The generalist view. Every market type in one searchable table — the equivalent of a block explorer, but for questions instead of transactions.</p>
+        <div class="go">Open app →</div>
+      </a>
+
+      <a class="card" href="deep.html">
+        <div class="kicker">02 · Many outcomes</div>
+        <h3>Deep</h3>
+        <p>For questions with more than a handful of answers: grant rounds, evaluation panels, long-list selections. Built for agents that must read a large field of options.</p>
+        <div class="go">Open Deep →</div>
+      </a>
+
+      <a class="card" href="futarchy.html">
+        <div class="kicker">03 · Conditional</div>
+        <h3>Futarchy</h3>
+        <p>Price what success looks like if a proposal passes versus if it fails. The market informs the decision; it does not take it.</p>
+        <div class="go">Open Futarchy →</div>
+      </a>
+
+      <a class="card" href="opportunity.html">
+        <div class="kicker">04 · Selection</div>
+        <h3>Opportunity Markets</h3>
+        <p>Traders forecast which submissions are likely to be chosen. Reviewers get a second signal; the final call stays with the people accountable for it.</p>
+        <div class="go">Open Opportunity →</div>
+      </a>
+
+      <a class="card" href="risk.html">
+        <div class="kicker">05 · Risk</div>
+        <h3>Risk Pricing</h3>
+        <p>Market estimates of default risk across DeFi protocols, presented as a comparison rather than a single yes-or-no price.</p>
+        <div class="go">Open Risk Pricing →</div>
+      </a>
+
+      <div class="card feature">
+        <div class="kicker">00 · This surface</div>
+        <h3>Homepage</h3>
+        <p>
+          The homepage has one job: make the architecture legible in ten seconds. Five products look like
+          five companies unless one screen states the shared core and routes between them. Navigation is
+          identical across all six interfaces, so the ecosystem reads as one product family rather than a
+          set of unrelated tools.
+        </p>
+        <div class="go">You are here</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>What the shared core actually settles</h2>
+      <p>Three primitives are reused by every interface above. This is the reason the six surfaces can share one balance sheet.</p>
+    </div>
+    <div class="grid g3">
+      <div class="card">
+        <div class="kicker">Primitive</div>
+        <h3>Conditional tokens</h3>
+        <p>A position is a claim on a specific outcome. Split, merge, and redeem are uniform across categorical, scalar and futarchy markets.</p>
+      </div>
+      <div class="card">
+        <div class="kicker">Primitive</div>
+        <h3>Resolution sources</h3>
+        <p>Markets declare who resolves them and what happens if that source stays silent. The same dispute path applies from a five-option grant round to a token-price futarchy test.</p>
+      </div>
+      <div class="card">
+        <div class="kicker">Primitive</div>
+        <h3>One collateral pool</h3>
+        <p>Capital posted on Deep is available to Risk Pricing. Six interfaces draw on one pool, which is why comparing estimates across products is meaningful at all.</p>
+      </div>
+    </div>
+    <div class="docnote">
+      <b>Concept note.</b> Figures on this page are illustrative. The interface set, navigation structure and
+      visual system are the deliverable.
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div>Seer · six-interface concept · built on the Electric Foundation brand kit</div>
+    <div><a href="app.html">App</a> · <a href="deep.html">Deep</a> · <a href="futarchy.html">Futarchy</a> · <a href="opportunity.html">Opportunity</a> · <a href="risk.html">Risk</a></div>
+  </footer>
+</div>
+
+</body>
+</html>
