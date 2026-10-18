@@ -1,0 +1,147 @@
+openapi: 3.0.3
+info:
+  title: Example API
+  version: 2.0.0
+servers:
+- url: /
+paths:
+  /items:
+    post:
+      operationId: create_item
+      summary: Create an item
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+              example:
+                id: 1
+                name: text
+                price: 1.5
+                in_stock: true
+                tags:
+                - text
+        '400':
+          description: Bad Request — the request body or query was malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: error_400
+                message: the request body or query was malformed
+        '422':
+          description: Unprocessable Entity — the payload parsed but failed validation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: error_422
+                message: the payload parsed but failed validation
+      tags:
+      - items
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewItem'
+            example:
+              name: text
+              price: 1.5
+  /items/{item_id}:
+    get:
+      operationId: get_item
+      summary: Read one item
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+              example:
+                id: 1
+                name: text
+                price: 1.5
+                in_stock: true
+                tags:
+                - text
+        '404':
+          description: Not Found — no resource with that identifier
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: error_404
+                message: no resource with that identifier
+      tags:
+      - items
+      parameters:
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          type: integer
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          description: stable machine-readable error code
+        message:
+          type: string
+          description: human-readable explanation
+        details:
+          type: object
+          description: optional field-level detail
+    Item:
+      properties:
+        id:
+          description: stable identifier
+          title: Id
+          type: integer
+        name:
+          title: Name
+          type: string
+        price:
+          title: Price
+          type: number
+        in_stock:
+          default: true
+          title: In Stock
+          type: boolean
+        tags:
+          default: []
+          items:
+            type: string
+          title: Tags
+          type: array
+      required:
+      - id
+      - name
+      - price
+      title: Item
+      type: object
+    NewItem:
+      properties:
+        name:
+          title: Name
+          type: string
+        price:
+          title: Price
+          type: number
+      required:
+      - name
+      - price
+      title: NewItem
+      type: object
