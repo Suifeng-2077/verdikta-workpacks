@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Design system — the rules the six surfaces share</title>
+<meta name="description" content="Colour, type, spacing and components shared by all six Seer interfaces." />
+<style>
+/* ============================================================
+   Seer — Six Interfaces
+   Design system derived from the Electric Foundation brand kit:
+   deep neutral ground, violet as the single accent, cyan only
+   where a second signal is genuinely needed.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:            #08080c;
+  --bg-soft:       #0b0b12;
+  --panel:         #0f0f17;
+  --panel-2:       #131320;
+  --line:          rgba(255, 255, 255, 0.07);
+  --line-strong:   rgba(255, 255, 255, 0.14);
+  --ink:           #f2f2f7;
+  --ink-2:         #a9a9bd;
+  --ink-3:         #6d6d80;
+  --violet:        #7c5cff;
+  --violet-2:      #9b82ff;
+  --violet-dim:    rgba(124, 92, 255, 0.14);
+  --cyan:          #00c8dc;
+  --cyan-dim:      rgba(0, 200, 220, 0.12);
+  --green:         #35d39a;
+  --red:           #ff5c6e;
+  --amber:         #ffb347;
+  --r:             14px;
+  --r-sm:          9px;
+  --sans:          'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+  --body:          'Inter', 'Segoe UI', system-ui, sans-serif;
+  --mono:          'JetBrains Mono', ui-monospace, 'Cascadia Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background:
+    radial-gradient(1100px 620px at 78% -12%, rgba(124, 92, 255, 0.16), transparent 62%),
+    radial-gradient(760px 460px at 6% 104%, rgba(0, 200, 220, 0.07), transparent 60%),
+    var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* faint engineering grid, keeps large dark areas from looking flat */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 72px 72px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap { position: relative; z-index: 1; max-width: 1220px; margin: 0 auto; padding: 0 28px 96px; }
+
+/* ---------- top bar ---------- */
+.nav {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 26px;
+  padding: 16px 0 15px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(8, 8, 12, 0.82);
+  backdrop-filter: blur(14px);
+}
+.brand { display: flex; align-items: center; gap: 11px; font-family: var(--sans); font-weight: 600; letter-spacing: -0.01em; }
+.brand svg { display: block; }
+.nav a {
+  color: var(--ink-3); text-decoration: none; font-size: 13.5px; font-family: var(--sans);
+  transition: color 0.16s;
+}
+.nav a:hover { color: var(--ink); }
+.nav a.on { color: var(--ink); }
+.nav .spacer { flex: 1; }
+.nav .pill {
+  font-size: 11.5px; font-family: var(--mono); letter-spacing: 0.04em;
+  color: var(--violet-2); border: 1px solid rgba(124, 92, 255, 0.42);
+  padding: 4px 10px; border-radius: 999px; background: var(--violet-dim);
+}
+
+/* ---------- headings ---------- */
+.eyebrow {
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--violet-2); margin-bottom: 16px;
+}
+h1 {
+  font-family: var(--sans); font-weight: 600; letter-spacing: -0.028em;
+  font-size: clamp(34px, 5.2vw, 60px); line-height: 1.05;
+}
+h1 .thin { color: var(--ink-3); font-weight: 400; }
+h2 {
+  font-family: var(--sans); font-weight: 600; letter-spacing: -0.02em;
+  font-size: clamp(22px, 2.6vw, 30px); line-height: 1.2;
+}
+h3 { font-family: var(--sans); font-weight: 600; font-size: 17px; letter-spacing: -0.01em; }
+.lede { color: var(--ink-2); font-size: clamp(15px, 1.6vw, 18px); max-width: 62ch; margin-top: 18px; }
+
+/* ---------- hero ---------- */
+.hero { padding: 84px 0 60px; }
+.hero .actions { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--sans); font-size: 14px; font-weight: 500;
+  padding: 11px 20px; border-radius: var(--r-sm);
+  border: 1px solid var(--line-strong); background: transparent; color: var(--ink);
+  text-decoration: none; transition: background 0.16s, border-color 0.16s, transform 0.16s;
+}
+.btn:hover { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.24); }
+.btn.primary {
+  background: var(--violet); border-color: var(--violet); color: #ffffff; font-weight: 600;
+}
+.btn.primary:hover { background: var(--violet-2); border-color: var(--violet-2); transform: translateY(-1px); }
+
+/* ---------- grid + cards ---------- */
+.grid { display: grid; gap: 14px; }
+.g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.card {
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border: 1px solid var(--line); border-radius: var(--r);
+  padding: 22px; position: relative; overflow: hidden;
+  transition: border-color 0.18s, transform 0.18s;
+}
+.card:hover { border-color: rgba(124, 92, 255, 0.38); }
+a.card { text-decoration: none; color: inherit; display: block; }
+a.card:hover { transform: translateY(-2px); }
+.card .kicker {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px;
+}
+.card p { color: var(--ink-2); font-size: 13.5px; margin-top: 9px; }
+.card .go { margin-top: 16px; font-size: 12.5px; font-family: var(--mono); color: var(--violet-2); }
+
+.card.feature { grid-column: span 2; }
+@media (max-width: 900px) {
+  .g3, .g2, .g4 { grid-template-columns: 1fr; }
+  .card.feature { grid-column: span 1; }
+}
+
+/* ---------- stat ---------- */
+.stat .num {
+  font-family: var(--sans); font-weight: 600; font-size: 30px;
+  letter-spacing: -0.03em; font-variant-numeric: tabular-nums;
+}
+.stat .num small { font-size: 14px; color: var(--ink-2); font-weight: 400; margin-left: 3px; }
+.stat .lbl { font-size: 11.5px; font-family: var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+.up { color: var(--green); }
+.down { color: var(--red); }
+
+/* ---------- table ---------- */
+.table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.table th {
+  text-align: left; font-family: var(--mono); font-size: 10.5px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3);
+  padding: 0 14px 12px; border-bottom: 1px solid var(--line);
+}
+.table td { padding: 13px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); white-space: nowrap; }
+.table td.q { white-space: normal; }
+.table tr:last-child td { border-bottom: none; }
+.table tbody tr { transition: background 0.14s; }
+.table tbody tr:hover { background: rgba(255, 255, 255, 0.026); }
+.table .q { color: var(--ink); font-weight: 500; }
+.table .num { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink-2); }
+
+.tag {
+  display: inline-block; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.07em;
+  text-transform: uppercase; padding: 2.5px 8px; border-radius: 999px;
+  border: 1px solid var(--line-strong); color: var(--ink-3);
+}
+.tag.violet { color: var(--violet-2); border-color: rgba(124, 92, 255, 0.4); background: var(--violet-dim); }
+.tag.cyan { color: var(--cyan); border-color: rgba(0, 200, 220, 0.4); background: var(--cyan-dim); }
+.tag.green { color: var(--green); border-color: rgba(53, 211, 154, 0.4); }
+
+/* ---------- probability bar ---------- */
+.prob { display: flex; align-items: center; gap: 10px; }
+.prob .track { flex: 1; height: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.prob .fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--violet), var(--violet-2)); }
+.prob .fill.cy { background: linear-gradient(90deg, #0aa9bb, var(--cyan)); }
+.prob .val { font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; min-width: 46px; text-align: right; }
+
+/* ---------- layout with sidebar ---------- */
+.split { display: grid; grid-template-columns: 232px minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
+
+.side { position: sticky; top: 78px; }
+.side .group { margin-bottom: 22px; }
+.side .group h4 {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: 9px;
+}
+.side .opt {
+  display: flex; justify-content: space-between; gap: 8px;
+  padding: 7px 10px; border-radius: 7px; font-size: 13px; color: var(--ink-2); cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+}
+.side .opt:hover { background: rgba(255, 255, 255, 0.04); color: var(--ink); }
+.side .opt.on { background: var(--violet-dim); color: var(--violet-2); }
+.side .opt .n { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+
+/* ---------- section spacing ---------- */
+.sec { margin-top: 66px; }
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 18px; margin-bottom: 20px; flex-wrap: wrap; }
+.sec-head p { color: var(--ink-3); font-size: 13px; max-width: 48ch; }
+
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 22px; }
+
+/* ---------- bars chart ---------- */
+.bars { display: flex; flex-direction: column; gap: 11px; }
+.bar-row { display: grid; grid-template-columns: 200px minmax(0, 1fr) 58px; gap: 12px; align-items: center; font-size: 13px; }
+@media (max-width: 620px) { .bar-row { grid-template-columns: 124px minmax(0, 1fr) 52px; } }
+.bar-row .name { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-row .track { height: 9px; background: rgba(255, 255, 255, 0.06); border-radius: 999px; overflow: hidden; }
+.bar-row .fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #5b3fd6, var(--violet-2)); }
+.bar-row .pct { font-family: var(--mono); font-size: 12px; text-align: right; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+/* ---------- risk heat cells ---------- */
+.heat { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 10px; }
+.heat .cell {
+  border: 1px solid var(--line); border-radius: var(--r-sm); padding: 14px;
+  background: var(--panel-2); position: relative; overflow: hidden;
+}
+.heat .cell::after {
+  content: ''; position: absolute; inset: 0; opacity: var(--o, 0.1);
+  background: var(--c, var(--violet)); pointer-events: none;
+}
+.heat .cell .sym { font-family: var(--sans); font-weight: 600; font-size: 15px; position: relative; z-index: 1; }
+.heat .cell .pd { font-family: var(--mono); font-size: 21px; margin-top: 6px; position: relative; z-index: 1; font-variant-numeric: tabular-nums; }
+.heat .cell .sub { font-size: 11px; color: var(--ink-3); position: relative; z-index: 1; margin-top: 2px; }
+
+/* ---------- comparison columns ---------- */
+.versus { display: grid; grid-template-columns: 1fr 68px 1fr; gap: 14px; align-items: stretch; }
+@media (max-width: 760px) { .versus { grid-template-columns: 1fr; } }
+.versus .vs {
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 12px; color: var(--ink-3);
+}
+.verdict {
+  border-radius: var(--r); border: 1px solid rgba(53, 211, 154, 0.34);
+  background: rgba(53, 211, 154, 0.07); padding: 18px 22px;
+}
+
+/* ---------- leaderboard ---------- */
+.rank { display: flex; flex-direction: column; }
+.rank .row {
+  display: grid; grid-template-columns: 40px minmax(0, 1fr) 120px 92px;
+  gap: 14px; align-items: center; padding: 13px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-size: 13.5px;
+}
+@media (max-width: 640px) { .rank .row { grid-template-columns: 30px minmax(0, 1fr) 70px; } .rank .row .hide-sm { display: none; } }
+.rank .row:last-child { border-bottom: none; }
+.rank .i { font-family: var(--mono); color: var(--ink-3); font-size: 12px; }
+.rank .nm { font-weight: 500; }
+.rank .nm span { color: var(--ink-3); font-weight: 400; font-size: 12px; display: block; margin-top: 2px; }
+
+/* ---------- footer ---------- */
+.foot {
+  margin-top: 92px; padding-top: 26px; border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  color: var(--ink-3); font-size: 12.5px;
+}
+.foot a { color: var(--ink-3); text-decoration: none; }
+.foot a:hover { color: var(--violet-2); }
+
+/* ---------- misc ---------- */
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.dim { color: var(--ink-3); }
+.small { font-size: 12.5px; }
+hr.sep { border: none; border-top: 1px solid var(--line); margin: 26px 0; }
+
+.docnote {
+  border-left: 2px solid var(--violet); padding: 10px 0 10px 16px;
+  color: var(--ink-2); font-size: 13px; margin-top: 26px;
+}
+.docnote b { color: var(--ink); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+/* ---------- narrow screens ---------- */
+@media (max-width: 780px) {
+  html, body { overflow-x: hidden; }
+  .wrap { padding: 0 18px 72px; }
+  .nav {
+    gap: 15px; overflow-x: auto; scrollbar-width: none;
+    -webkit-overflow-scrolling: touch; padding: 13px 0 12px;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav a { white-space: nowrap; font-size: 13px; }
+  .nav .pill { display: none; }
+  .nav .spacer { display: none; }
+  .hero { padding: 48px 0 34px; }
+  .sec { margin-top: 46px; }
+  .card, .panel { padding: 17px; }
+  .table th, .table td { padding-left: 10px; padding-right: 10px; }
+  .foot { margin-top: 60px; flex-direction: column; gap: 10px; }
+}
+
+</style>
+<style>
+  .swatch { border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--panel-2); }
+  .swatch .chip { height:74px; }
+  .swatch .meta { padding:11px 13px; }
+  .swatch .name { font-family:var(--mono); font-size:12px; color:var(--ink); }
+  .swatch .use { font-size:11.5px; color:var(--ink-3); margin-top:3px; }
+  .type-row { display:grid; grid-template-columns:120px minmax(0,1fr); gap:18px; align-items:baseline;
+              padding:15px 0; border-bottom:1px solid rgba(255,255,255,.05); }
+  .type-row:last-child { border-bottom:none; }
+  .type-row .spec { font-family:var(--mono); font-size:11px; color:var(--ink-3); line-height:1.5; }
+  .demo { background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:20px; }
+  .space-demo { display:flex; flex-direction:column; gap:9px; }
+  .space-demo .bar { height:14px; background:linear-gradient(90deg,var(--violet),var(--violet-2)); border-radius:3px; opacity:.85; }
+  .grid-demo {
+    height:150px; border:1px solid var(--line); border-radius:10px; overflow:hidden;
+    background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);
+    background-size:24px 24px;
+  }
+  @media (max-width:780px){ .type-row { grid-template-columns:1fr; gap:6px; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="nav">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+        <path d="M13 1.6 24 7.6v10.8L13 24.4 2 18.4V7.6z" stroke="#7c5cff" stroke-width="1.4"/>
+        <path d="M13 1.6v22.8M2 7.6l11 6 11-6" stroke="#7c5cff" stroke-width="0.9" opacity="0.5"/>
+        <circle cx="13" cy="13" r="2.6" fill="#7c5cff"/>
+      </svg>
+      Seer
+    </div>
+    <a href="index.html">Ecosystem</a>
+    <a href="app.html">App</a>
+    <a href="deep.html">Deep</a>
+    <a href="futarchy.html">Futarchy</a>
+    <a href="opportunity.html">Opportunity</a>
+    <a href="risk.html">Risk Pricing</a>
+    <a class="on" href="system.html">System</a>
+    <div class="spacer"></div>
+    <span class="pill">EF · interface concept</span>
+  </nav>
+
+  <header class="hero" style="padding:56px 0 30px">
+    <div class="eyebrow">Appendix · design system</div>
+    <h1 style="font-size:clamp(30px,4vw,46px)">The rules<br /><span class="thin">all six surfaces obey.</span></h1>
+    <p class="lede">
+      Six interfaces only read as one product if they share more than a logo. This page documents the
+      decisions that make that true — the tokens, the type scale, the spacing, and the components that
+      repeat across every screen. Everything below is the live CSS, not a picture of it.
+    </p>
+  </header>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>Colour</h2>
+      <p>Two decisions rule the palette: violet is the only accent, cyan only exists when a second variable is genuinely present.</p>
+    </div>
+    <div class="grid g4">
+      <div class="swatch"><div class="chip" style="background:#08080c"></div><div class="meta"><div class="name">--bg #08080C</div><div class="use">page ground</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#0f0f17"></div><div class="meta"><div class="name">--panel #0F0F17</div><div class="use">cards, tables</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#131320"></div><div class="meta"><div class="name">--panel-2 #131320</div><div class="use">raised surfaces</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#7c5cff"></div><div class="meta"><div class="name">--violet #7C5CFF</div><div class="use">the one accent</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#00c8dc"></div><div class="meta"><div class="name">--cyan #00C8DC</div><div class="use">second axis only</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#35d39a"></div><div class="meta"><div class="name">--green #35D39A</div><div class="use">pass, condition met</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#ff5c6e"></div><div class="meta"><div class="name">--red #FF5C6E</div><div class="use">fail, downside</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#ffb347"></div><div class="meta"><div class="name">--amber #FFB347</div><div class="use">warning band</div></div></div>
+    </div>
+    <div class="docnote">
+      <b>Why violet is a single accent.</b> The EF kit fills large panels with brand violet. Across six
+      dense screens that would flatten every table into one tone, so the surface stays neutral and violet
+      is reserved for primary actions, the active nav item, and the leading value in a comparison.
+      A violet element always means: look here.
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>Type scale</h2>
+      <p>Space Grotesk for display, Inter for reading, JetBrains Mono wherever a number must line up.</p>
+    </div>
+    <div class="panel">
+      <div class="type-row">
+        <div class="spec">h1 · Grotesk 600<br />clamp(34→60px)<br />-0.028em</div>
+        <div><span style="font-family:var(--sans);font-weight:600;font-size:clamp(30px,4vw,46px);letter-spacing:-.028em">One protocol, six ways</span></div>
+      </div>
+      <div class="type-row">
+        <div class="spec">h2 · Grotesk 600<br />clamp(22→30px)<br />-0.02em</div>
+        <div><span style="font-family:var(--sans);font-weight:600;font-size:28px;letter-spacing:-.02em">Interfaces, one book of liquidity</span></div>
+      </div>
+      <div class="type-row">
+        <div class="spec">h3 · Grotesk 600<br />17px</div>
+        <div><span style="font-family:var(--sans);font-weight:600;font-size:17px">Risk Pricing</span></div>
+      </div>
+      <div class="type-row">
+        <div class="spec">body · Inter 400<br />15px / 1.55</div>
+        <div><span style="color:var(--ink-2);max-width:52ch;display:block">A single yes-or-no price tells you almost nothing about how much risk you are carrying.</span></div>
+      </div>
+      <div class="type-row">
+        <div class="spec">figure · Mono 500<br />tabular-nums</div>
+        <div><span style="font-family:var(--mono);font-size:22px;font-variant-numeric:tabular-nums">1,284 · 62% · 1.0842 · $223.9K</span></div>
+      </div>
+      <div class="type-row">
+        <div class="spec">kicker · Mono 400<br />10.5px / .14em</div>
+        <div><span style="font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--violet-2)">Interface 05 · Risk</span></div>
+      </div>
+    </div>
+    <div class="docnote">
+      <b>Why a mono face at all.</b> On a risk board, aligned digits are a feature, not decoration. Proportional
+      figures make a 12-row comparison scan unevenly; tabular mono figures let the eye run down a column.
+      The kit's display face is excellent at poster size and costs legibility at 12px inside a sixty-row table,
+      which is why body text is Inter rather than the display family.
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>Grid &amp; spacing</h2>
+      <p>One 72px engineering grid sits under the dark ground at 2% opacity. Every card, table cell and gutter derives from it.</p>
+    </div>
+    <div class="grid g2">
+      <div>
+        <div class="grid-demo"></div>
+        <p class="small dim" style="margin-top:10px">72px grid · 2% white. Keeps large dark areas from reading as empty and makes card borders feel intentional.</p>
+      </div>
+      <div class="demo">
+        <div class="space-demo">
+          <div class="bar" style="width:100%"></div>
+          <div class="bar" style="width:74%"></div>
+          <div class="bar" style="width:48%"></div>
+          <div class="bar" style="width:26%"></div>
+          <div class="bar" style="width:12%"></div>
+        </div>
+        <p class="small dim" style="margin-top:14px">
+          Spacing scale 4 / 8 / 12 / 14 / 22 / 26 / 46 / 66. Cards use 22px padding, gaps 14px,
+          section rhythm 66px, page gutter 28px (18px under 780px).
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>Components</h2>
+      <p>The same six primitives appear on every screen. Below they are rendered live, not mocked up.</p>
+    </div>
+
+    <div class="grid g3" style="margin-bottom:14px">
+      <div class="card">
+        <div class="kicker">01 · Card</div>
+        <h3>Surface</h3>
+        <p>Panel gradient, 1px hairline, 14px radius. Hover raises the border to violet at 38%.</p>
+      </div>
+      <div class="card">
+        <div class="kicker">02 · Stat</div>
+        <div class="stat" style="margin-top:8px"><div class="lbl">Open interest</div><div class="num">$4.19<small>M</small></div></div>
+      </div>
+      <div class="card">
+        <div class="kicker">03 · Tag</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:10px">
+          <span class="tag violet">Deep</span>
+          <span class="tag cyan">Opportunity</span>
+          <span class="tag green">Passed</span>
+          <span class="tag">Categorical</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-bottom:14px">
+      <div class="kicker">04 · Probability</div>
+      <div style="display:flex;flex-direction:column;gap:11px;margin-top:14px">
+        <div class="prob"><div class="track"><div class="fill" style="width:74%"></div></div><div class="val">74%</div></div>
+        <div class="prob"><div class="track"><div class="fill cy" style="width:31%"></div></div><div class="val">31%</div></div>
+      </div>
+      <p class="small dim" style="margin-top:13px">Violet fill is a probability on the primary axis; cyan appears only when a screen compares two axes at once.</p>
+    </div>
+
+    <div class="panel" style="padding:0;overflow:hidden;margin-bottom:14px">
+      <table class="table">
+        <thead><tr><th style="padding-left:22px">05 · Table row</th><th>Structure</th><th>Price</th><th>Ends</th></tr></thead>
+        <tbody>
+          <tr><td class="q" style="padding-left:22px">Will the October grant round fund more than 14 of 60?</td><td><span class="tag violet">Deep</span></td><td class="num">62%</td><td class="num">2d 14h</td></tr>
+          <tr><td class="q" style="padding-left:22px">Annual default probability, Aave v3 — Q4</td><td><span class="tag cyan">Risk</span></td><td class="num">1.2%</td><td class="num">74d</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <div class="kicker">06 · Buttons</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+        <a class="btn primary" href="index.html">Primary action</a>
+        <a class="btn" href="index.html">Secondary</a>
+      </div>
+      <p class="small dim" style="margin-top:13px">Only one primary button per view. If a screen needs two, one of them is not primary.</p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>Dark and light</h2>
+      <p>The EF kit ships both modes. The dark ground leads because these screens are read for long stretches while sizing exposure; the light version keeps the same hierarchy.</p>
+    </div>
+    <div class="grid g2">
+      <div class="demo" style="background:#fbfbfc;border-color:#e3e5ea">
+        <div style="font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#5b6070">Light mode · preview</div>
+        <div style="margin-top:12px;background:#fff;border:1px solid #e3e5ea;border-radius:10px;padding:14px">
+          <div style="font-family:var(--sans);font-weight:600;font-size:16px;color:#15161a">Risk Pricing</div>
+          <div style="font-family:var(--mono);font-size:20px;color:#15161a;margin-top:6px">1.2%</div>
+          <div style="height:6px;border-radius:999px;background:#eceef2;margin-top:10px;overflow:hidden">
+            <div style="height:100%;width:20%;background:#7c5cff;border-radius:999px"></div>
+          </div>
+        </div>
+        <p style="font-size:12.5px;color:#5b6070;margin-top:12px">Same tokens, inverted ground. Violet keeps its role; the hairline drops to #E3E5EA.</p>
+      </div>
+      <div class="demo">
+        <div style="font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)">Dark mode · the default</div>
+        <div style="margin-top:12px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:14px">
+          <div style="font-family:var(--sans);font-weight:600;font-size:16px">Risk Pricing</div>
+          <div style="font-family:var(--mono);font-size:20px;margin-top:6px">1.2%</div>
+          <div style="height:6px;border-radius:999px;background:rgba(255,255,255,.08);margin-top:10px;overflow:hidden">
+            <div style="height:100%;width:20%;background:linear-gradient(90deg,#7c5cff,#9b82ff);border-radius:999px"></div>
+          </div>
+        </div>
+        <p class="small dim" style="margin-top:12px">The shipped screens use this ground. The grid is only visible here, at 2%.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>What this buys the six screens</h2>
+    </div>
+    <div class="grid g3">
+      <div class="card"><div class="kicker">Consistency</div><h3>One navigation</h3><p>Identical top bar on all six pages, same routes, same active state. A reader never has to relearn where things are.</p></div>
+      <div class="card"><div class="kicker">Legibility</div><h3>One type contract</h3><p>Display is always Grotesk, prose always Inter, figures always mono. Numbers can be compared across screens without re-reading.</p></div>
+      <div class="card"><div class="kicker">Meaning</div><h3>One colour contract</h3><p>Violet means look here, cyan means a second axis, green and red only ever mean pass and fail. No screen invents its own semantics.</p></div>
+    </div>
+    <div class="docnote">
+      <b>Deliberate departures, restated.</b> Violet as a single accent rather than a surface · a cool cyan added
+      as a second signal for the two comparison screens · Space Grotesk with Inter and JetBrains Mono instead of
+      the kit's single display face · a 72px grid at 2% under the dark ground. Each of these is explained where it
+      appears on the page it affects.
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div>Seer · appendix to the six-interface concept</div>
+    <div><a href="index.html">Ecosystem</a> · <a href="app.html">App</a> · <a href="deep.html">Deep</a> · <a href="futarchy.html">Futarchy</a> · <a href="opportunity.html">Opportunity</a> · <a href="risk.html">Risk Pricing</a></div>
+  </footer>
+</div>
+
+</body>
+</html>
