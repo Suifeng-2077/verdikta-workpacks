@@ -1,0 +1,14 @@
+{
+  "contract": "0x5555fa783936c260f77385b4e153b9725fef1719",
+  "chain": "eip155:8453",
+  "block": 52733667,
+  "bountyCounter": 508,
+  "scanned": 508,
+  "ok": 508,
+  "errors": 0,
+  "zero_claim": 143,
+  "with_claims": 365,
+  "saturated": 104,
+  "rule": "claim_count_exact is filled only when the page is short (fewer than ten real ids). A saturated page means ten is a floor, not a total; the cursor argument does not advance so no larger figure is readable on chain.",
+  "generated": "2026-10-17T17:14:02.386Z"
+}
