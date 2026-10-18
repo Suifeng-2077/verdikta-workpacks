@@ -1,4 +1,4 @@
-# python-converters
+﻿# python-converters
 
 Two small, dependency-free converters with tests: `csv2json.py` and `json2csv.py`.
 
@@ -26,10 +26,13 @@ python csv2json.py data.csv --strict              # exit 2 if any row was skippe
 | option | default | meaning |
 |---|---|---|
 | `-o, --out` | stdout | output file |
+| `--format` | `array` | `array`, `jsonl` (one object per line), or `keyed` |
+| `--key-by` | 鈥?| column to key the object by, required with `--format keyed` |
+| `--types` | off | convert unambiguous numeric and boolean cells; off keeps everything a string |
+| `--null-empty` | off | emit `null` instead of `""` for empty cells |
 | `--delimiter` | sniffed | force a field delimiter |
 | `--encoding` | `utf-8-sig` | input encoding |
 | `--indent` | `2` | JSON indent, `0` for compact |
-| `--jsonl` | off | one JSON object per line instead of one array |
 | `--strict` | off | non-zero exit if a row was skipped |
 
 What it gets right:
@@ -40,8 +43,23 @@ What it gets right:
   sniffer gets wrong.
 - Encoding defaults to `utf-8-sig` because spreadsheet exports usually carry a BOM, and a stray BOM silently
   changes the first column's name.
-- A **ragged row is skipped and reported with its line number**, and the count is always printed — nothing
+- **Line endings are normalised explicitly**, so the same CSV produces byte-identical JSON on Windows and
+  Linux instead of leaving `\r\n` inside multi-line fields.
+- A **ragged row is skipped and reported with its line number**, and the count is always printed 鈥?nothing
   disappears quietly.
+
+### When the CSV is broken
+
+Each failure has its own message and never a bare traceback:
+
+| input problem | what you get |
+|---|---|
+| NUL bytes (usually UTF-16 read as UTF-8) | `contains NUL bytes 鈥?pass --encoding utf-16` |
+| invalid bytes for the encoding | `not valid utf-8: bad byte at offset N` |
+| duplicate header name | `duplicate header name(s) ['id']` 鈥?JSON keys would collide |
+| empty file | `no header row` |
+| header with no data rows | `header-only file, no data rows` |
+| ragged row | skipped, `skip line N: expected X fields, found Y`, counted, exit 2 under `--strict` |
 
 ## json2csv.py
 
@@ -117,11 +135,12 @@ field.
 ```
 $ python -m pytest -q
 .................                                                        [100%]
-17 passed in 0.13s
+28 passed in 0.14s
 ```
 
 Synthetic fixtures only, no network, no real data. Coverage includes: quoted comma, embedded newline,
 doubled quote, BOM-prefixed header, semicolon detection, explicit delimiter override, ragged row skipped
 and counted, empty file, CLI writing a file, `--strict` exit code, key union, missing key not shifting a
 row, nested value JSON-encoded, empty array, malformed JSON naming the line, forced column order, and a
-CSV→JSON→CSV round trip.
+CSV鈫扟SON鈫扖SV round trip.
+
