@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Seer — One protocol, six interfaces</title>
+<meta name="description" content="Seer is the prediction protocol underneath Deep, Futarchy, Opportunity Markets and Risk Pricing." />
+<style>
+/* ============================================================
+   Seer — Six Interfaces
+   Design system derived from the Electric Foundation brand kit:
+   deep neutral ground, violet as the single accent, cyan only
+   where a second signal is genuinely needed.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:            #08080c;
+  --bg-soft:       #0b0b12;
+  --panel:         #0f0f17;
+  --panel-2:       #131320;
+  --line:          rgba(255, 255, 255, 0.07);
+  --line-strong:   rgba(255, 255, 255, 0.14);
+  --ink:           #f2f2f7;
+  --ink-2:         #a9a9bd;
+  --ink-3:         #6d6d80;
+  --violet:        #7c5cff;
+  --violet-2:      #9b82ff;
+  --violet-dim:    rgba(124, 92, 255, 0.14);
+  --cyan:          #00c8dc;
+  --cyan-dim:      rgba(0, 200, 220, 0.12);
+  --green:         #35d39a;
+  --red:           #ff5c6e;
+  --amber:         #ffb347;
+  --r:             14px;
+  --r-sm:          9px;
+  --sans:          'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+  --body:          'Inter', 'Segoe UI', system-ui, sans-serif;
+  --mono:          'JetBrains Mono', ui-monospace, 'Cascadia Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background:
+    radial-gradient(1100px 620px at 78% -12%, rgba(124, 92, 255, 0.16), transparent 62%),
+    radial-gradient(760px 460px at 6% 104%, rgba(0, 200, 220, 0.07), transparent 60%),
+    var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* faint engineering grid, keeps large dark areas from looking flat */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 72px 72px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap { position: relative; z-index: 1; max-width: 1220px; margin: 0 auto; padding: 0 28px 96px; }
+
+/* ---------- top bar ---------- */
+.nav {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 26px;
+  padding: 16px 0 15px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(8, 8, 12, 0.82);
+  backdrop-filter: blur(14px);
+}
+.brand { display: flex; align-items: center; gap: 11px; font-family: var(--sans); font-weight: 600; letter-spacing: -0.01em; }
+.brand svg { display: block; }
+.nav a {
+  color: var(--ink-3); text-decoration: none; font-size: 13.5px; font-family: var(--sans);
+  transition: color 0.16s;
+}
+.nav a:hover { color: var(--ink); }
+.nav a.on { color: var(--ink); }
+.nav .spacer { flex: 1; }
+.nav .pill {
+  font-size: 11.5px; font-family: var(--mono); letter-spacing: 0.04em;
+  color: var(--violet-2); border: 1px solid rgba(124, 92, 255, 0.42);
+  padding: 4px 10px; border-radius: 999px; background: var(--violet-dim);
+}
+
+/* ---------- headings ---------- */
+.eyebrow {
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--violet-2); margin-bottom: 16px;
+}
+h1 {
+  font-family: var(--sans); font-weight: 600; letter-spacing: -0.028em;
+  font-size: clamp(34px, 5.2vw, 60px); line-height: 1.05;
+}
+h1 .thin { color: var(--ink-3); font-weight: 400; }
+h2 {
+  font-family: var(--sans); font-weight: 600; letter-spacing: -0.02em;
+  font-size: clamp(22px, 2.6vw, 30px); line-height: 1.2;
+}
+h3 { font-family: var(--sans); font-weight: 600; font-size: 17px; letter-spacing: -0.01em; }
+.lede { color: var(--ink-2); font-size: clamp(15px, 1.6vw, 18px); max-width: 62ch; margin-top: 18px; }
+
+/* ---------- hero ---------- */
+.hero { padding: 84px 0 60px; }
+.hero .actions { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--sans); font-size: 14px; font-weight: 500;
+  padding: 11px 20px; border-radius: var(--r-sm);
+  border: 1px solid var(--line-strong); background: transparent; color: var(--ink);
+  text-decoration: none; transition: background 0.16s, border-color 0.16s, transform 0.16s;
+}
+.btn:hover { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.24); }
+.btn.primary {
+  background: var(--violet); border-color: var(--violet); color: #ffffff; font-weight: 600;
+}
+.btn.primary:hover { background: var(--violet-2); border-color: var(--violet-2); transform: translateY(-1px); }
+
+/* ---------- grid + cards ---------- */
+.grid { display: grid; gap: 14px; }
+.g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.card {
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border: 1px solid var(--line); border-radius: var(--r);
+  padding: 22px; position: relative; overflow: hidden;
+  transition: border-color 0.18s, transform 0.18s;
+}
+.card:hover { border-color: rgba(124, 92, 255, 0.38); }
+a.card { text-decoration: none; color: inherit; display: block; }
+a.card:hover { transform: translateY(-2px); }
+.card .kicker {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px;
+}
+.card p { color: var(--ink-2); font-size: 13.5px; margin-top: 9px; }
+.card .go { margin-top: 16px; font-size: 12.5px; font-family: var(--mono); color: var(--violet-2); }
+
+.card.feature { grid-column: span 2; }
+@media (max-width: 900px) {
+  .g3, .g2, .g4 { grid-template-columns: 1fr; }
+  .card.feature { grid-column: span 1; }
+}
+
+/* ---------- stat ---------- */
+.stat .num {
+  font-family: var(--sans); font-weight: 600; font-size: 30px;
+  letter-spacing: -0.03em; font-variant-numeric: tabular-nums;
+}
+.stat .num small { font-size: 14px; color: var(--ink-2); font-weight: 400; margin-left: 3px; }
+.stat .lbl { font-size: 11.5px; font-family: var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+.up { color: var(--green); }
+.down { color: var(--red); }
+
+/* ---------- table ---------- */
+.table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.table th {
+  text-align: left; font-family: var(--mono); font-size: 10.5px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3);
+  padding: 0 14px 12px; border-bottom: 1px solid var(--line);
+}
+.table td { padding: 13px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); white-space: nowrap; }
+.table td.q { white-space: normal; }
+.table tr:last-child td { border-bottom: none; }
+.table tbody tr { transition: background 0.14s; }
+.table tbody tr:hover { background: rgba(255, 255, 255, 0.026); }
+.table .q { color: var(--ink); font-weight: 500; }
+.table .num { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink-2); }
+
+.tag {
+  display: inline-block; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.07em;
+  text-transform: uppercase; padding: 2.5px 8px; border-radius: 999px;
+  border: 1px solid var(--line-strong); color: var(--ink-3);
+}
+.tag.violet { color: var(--violet-2); border-color: rgba(124, 92, 255, 0.4); background: var(--violet-dim); }
+.tag.cyan { color: var(--cyan); border-color: rgba(0, 200, 220, 0.4); background: var(--cyan-dim); }
+.tag.green { color: var(--green); border-color: rgba(53, 211, 154, 0.4); }
+
+/* ---------- probability bar ---------- */
+.prob { display: flex; align-items: center; gap: 10px; }
+.prob .track { flex: 1; height: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.prob .fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--violet), var(--violet-2)); }
+.prob .fill.cy { background: linear-gradient(90deg, #0aa9bb, var(--cyan)); }
+.prob .val { font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; min-width: 46px; text-align: right; }
+
+/* ---------- layout with sidebar ---------- */
+.split { display: grid; grid-template-columns: 232px minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
+
+.side { position: sticky; top: 78px; }
+.side .group { margin-bottom: 22px; }
+.side .group h4 {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: 9px;
+}
+.side .opt {
+  display: flex; justify-content: space-between; gap: 8px;
+  padding: 7px 10px; border-radius: 7px; font-size: 13px; color: var(--ink-2); cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+}
+.side .opt:hover { background: rgba(255, 255, 255, 0.04); color: var(--ink); }
+.side .opt.on { background: var(--violet-dim); color: var(--violet-2); }
+.side .opt .n { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+
+/* ---------- section spacing ---------- */
+.sec { margin-top: 66px; }
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 18px; margin-bottom: 20px; flex-wrap: wrap; }
+.sec-head p { color: var(--ink-3); font-size: 13px; max-width: 48ch; }
+
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 22px; }
+
+/* ---------- bars chart ---------- */
+.bars { display: flex; flex-direction: column; gap: 11px; }
+.bar-row { display: grid; grid-template-columns: 168px minmax(0, 1fr) 58px; gap: 12px; align-items: center; font-size: 13px; }
+@media (max-width: 620px) { .bar-row { grid-template-columns: 104px minmax(0, 1fr) 52px; } }
+.bar-row .name { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-row .track { height: 9px; background: rgba(255, 255, 255, 0.06); border-radius: 999px; overflow: hidden; }
+.bar-row .fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #5b3fd6, var(--violet-2)); }
+.bar-row .pct { font-family: var(--mono); font-size: 12px; text-align: right; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+/* ---------- risk heat cells ---------- */
+.heat { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 10px; }
+.heat .cell {
+  border: 1px solid var(--line); border-radius: var(--r-sm); padding: 14px;
+  background: var(--panel-2); position: relative; overflow: hidden;
+}
+.heat .cell::after {
+  content: ''; position: absolute; inset: 0; opacity: var(--o, 0.1);
+  background: var(--c, var(--violet)); pointer-events: none;
+}
+.heat .cell .sym { font-family: var(--sans); font-weight: 600; font-size: 15px; position: relative; z-index: 1; }
+.heat .cell .pd { font-family: var(--mono); font-size: 21px; margin-top: 6px; position: relative; z-index: 1; font-variant-numeric: tabular-nums; }
+.heat .cell .sub { font-size: 11px; color: var(--ink-3); position: relative; z-index: 1; margin-top: 2px; }
+
+/* ---------- comparison columns ---------- */
+.versus { display: grid; grid-template-columns: 1fr 68px 1fr; gap: 14px; align-items: stretch; }
+@media (max-width: 760px) { .versus { grid-template-columns: 1fr; } }
+.versus .vs {
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 12px; color: var(--ink-3);
+}
+.verdict {
+  border-radius: var(--r); border: 1px solid rgba(53, 211, 154, 0.34);
+  background: rgba(53, 211, 154, 0.07); padding: 18px 22px;
+}
+
+/* ---------- leaderboard ---------- */
+.rank { display: flex; flex-direction: column; }
+.rank .row {
+  display: grid; grid-template-columns: 40px minmax(0, 1fr) 120px 92px;
+  gap: 14px; align-items: center; padding: 13px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-size: 13.5px;
+}
+@media (max-width: 640px) { .rank .row { grid-template-columns: 30px minmax(0, 1fr) 70px; } .rank .row .hide-sm { display: none; } }
+.rank .row:last-child { border-bottom: none; }
+.rank .i { font-family: var(--mono); color: var(--ink-3); font-size: 12px; }
+.rank .nm { font-weight: 500; }
+.rank .nm span { color: var(--ink-3); font-weight: 400; font-size: 12px; display: block; margin-top: 2px; }
+
+/* ---------- footer ---------- */
+.foot {
+  margin-top: 92px; padding-top: 26px; border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  color: var(--ink-3); font-size: 12.5px;
+}
+.foot a { color: var(--ink-3); text-decoration: none; }
+.foot a:hover { color: var(--violet-2); }
+
+/* ---------- misc ---------- */
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.dim { color: var(--ink-3); }
+.small { font-size: 12.5px; }
+hr.sep { border: none; border-top: 1px solid var(--line); margin: 26px 0; }
+
+.docnote {
+  border-left: 2px solid var(--violet); padding: 10px 0 10px 16px;
+  color: var(--ink-2); font-size: 13px; margin-top: 26px;
+}
+.docnote b { color: var(--ink); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="nav">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+        <path d="M13 1.6 24 7.6v10.8L13 24.4 2 18.4V7.6z" stroke="#7c5cff" stroke-width="1.4"/>
+        <path d="M13 1.6v22.8M2 7.6l11 6 11-6" stroke="#7c5cff" stroke-width="0.9" opacity="0.5"/>
+        <circle cx="13" cy="13" r="2.6" fill="#7c5cff"/>
+      </svg>
+      Seer
+    </div>
+    <a class="on" href="index.html">Ecosystem</a>
+    <a href="app.html">App</a>
+    <a href="deep.html">Deep</a>
+    <a href="futarchy.html">Futarchy</a>
+    <a href="opportunity.html">Opportunity</a>
+    <a href="risk.html">Risk Pricing</a>
+    <div class="spacer"></div>
+    <span class="pill">EF · interface concept</span>
+  </nav>
+
+  <header class="hero">
+    <div class="eyebrow">Seer — prediction protocol</div>
+    <h1>One protocol.<br /><span class="thin">Six ways to see what happens next.</span></h1>
+    <p class="lede">
+      Seer is not a single app. It is the settlement layer that six interfaces run on: a general
+      explorer, a market for many-outcome questions, a futarchy engine, a submission-ranking market,
+      a cross-protocol risk board — and this page, which explains how they fit together.
+    </p>
+    <div class="actions">
+      <a class="btn primary" href="app.html">Open the explorer</a>
+      <a class="btn" href="#interfaces">See all six interfaces</a>
+    </div>
+  </header>
+
+  <section class="grid g4" aria-label="network stats">
+    <div class="card stat"><div class="lbl">Open markets</div><div class="num">1,284</div></div>
+    <div class="card stat"><div class="lbl">Settled this month</div><div class="num">412</div></div>
+    <div class="card stat"><div class="lbl">Volume · 30d</div><div class="num">$18.6<small>M</small></div></div>
+    <div class="card stat"><div class="lbl">Agent share of flow</div><div class="num">37<small>%</small></div></div>
+  </section>
+
+  <section class="sec" id="interfaces">
+    <div class="sec-head">
+      <h2>Six interfaces, one book of liquidity</h2>
+      <p>
+        Each surface answers a different question. They share collateral, resolution sources and
+        the same conditional-token core, so a position opened on one screen is legible on every other.
+      </p>
+    </div>
+
+    <div class="grid g3">
+      <a class="card" href="app.html">
+        <div class="kicker">01 · Explorer</div>
+        <h3>Seer App</h3>
+        <p>The generalist view. Every market type in one searchable table — the equivalent of a block explorer, but for questions instead of transactions.</p>
+        <div class="go">Open app →</div>
+      </a>
+
+      <a class="card" href="deep.html">
+        <div class="kicker">02 · Many outcomes</div>
+        <h3>Deep</h3>
+        <p>For questions with more than a handful of answers: grant rounds, evaluation panels, long-list selections. Built for agents that must read a large field of options.</p>
+        <div class="go">Open Deep →</div>
+      </a>
+
+      <a class="card" href="futarchy.html">
+        <div class="kicker">03 · Conditional</div>
+        <h3>Futarchy</h3>
+        <p>Price what success looks like if a proposal passes versus if it fails. The market informs the decision; it does not take it.</p>
+        <div class="go">Open Futarchy →</div>
+      </a>
+
+      <a class="card" href="opportunity.html">
+        <div class="kicker">04 · Selection</div>
+        <h3>Opportunity Markets</h3>
+        <p>Traders forecast which submissions are likely to be chosen. Reviewers get a second signal; the final call stays with the people accountable for it.</p>
+        <div class="go">Open Opportunity →</div>
+      </a>
+
+      <a class="card" href="risk.html">
+        <div class="kicker">05 · Risk</div>
+        <h3>Risk Pricing</h3>
+        <p>Market estimates of default risk across DeFi protocols, presented as a comparison rather than a single yes-or-no price.</p>
+        <div class="go">Open Risk Pricing →</div>
+      </a>
+
+      <div class="card feature">
+        <div class="kicker">00 · This surface</div>
+        <h3>Homepage</h3>
+        <p>
+          The homepage has one job: make the architecture legible in ten seconds. Five products look like
+          five companies unless one screen states the shared core and routes between them. Navigation is
+          identical across all six interfaces, so the ecosystem reads as one product family rather than a
+          set of unrelated tools.
+        </p>
+        <div class="go">You are here</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>What the shared core actually settles</h2>
+      <p>Three primitives are reused by every interface above. This is the reason the six surfaces can share one balance sheet.</p>
+    </div>
+    <div class="grid g3">
+      <div class="card">
+        <div class="kicker">Primitive</div>
+        <h3>Conditional tokens</h3>
+        <p>A position is a claim on a specific outcome. Split, merge, and redeem are uniform across categorical, scalar and futarchy markets.</p>
+      </div>
+      <div class="card">
+        <div class="kicker">Primitive</div>
+        <h3>Resolution sources</h3>
+        <p>Markets declare who resolves them and what happens if that source stays silent. The same dispute path applies from a five-option grant round to a token-price futarchy test.</p>
+      </div>
+      <div class="card">
+        <div class="kicker">Primitive</div>
+        <h3>One collateral pool</h3>
+        <p>Capital posted on Deep is available to Risk Pricing. Six interfaces draw on one pool, which is why comparing estimates across products is meaningful at all.</p>
+      </div>
+    </div>
+    <div class="docnote">
+      <b>Concept note.</b> Figures on this page are illustrative. The interface set, navigation structure and
+      visual system are the deliverable.
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div>Seer · six-interface concept · built on the Electric Foundation brand kit</div>
+    <div><a href="app.html">App</a> · <a href="deep.html">Deep</a> · <a href="futarchy.html">Futarchy</a> · <a href="opportunity.html">Opportunity</a> · <a href="risk.html">Risk</a></div>
+  </footer>
+</div>
+
+</body>
+</html>
